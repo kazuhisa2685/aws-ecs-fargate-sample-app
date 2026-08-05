@@ -34,7 +34,7 @@ provider "aws" {
 # 共通変数
 ####################################################
 locals {
-  project     = "portfolio"
+  project     = "sample"
   environment = "dev"
 }
 
