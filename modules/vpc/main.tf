@@ -194,3 +194,160 @@ resource "aws_route_table_association" "private_egress" {
   route_table_id = aws_route_table.private_route_table_egress.id
 }
 
+###############################################
+# Security Group
+###############################################
+
+# ALB用のセキュリティグループ　
+resource "aws_security_group" "alb_sg" {
+  name        = "${var.project}-${var.environment}-alb-sg"
+  description = "Security group for ALB"
+  vpc_id      = aws_vpc.vpc.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-alb-sg"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+# 開発端末インスタンスのセキュリティグループ
+resource "aws_security_group" "mgmt_sg" {
+  name        = "${var.project}-${var.environment}-mgmt-sg"
+  description = "Security group for mgmt instances"
+  vpc_id      = aws_vpc.vpc.id
+
+  # SSH
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # RDP
+  ingress {
+    from_port   = 3389
+    to_port     = 3389
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-mgmt-sg"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+# Fargate（フロントエンド）のセキュリティグループ
+resource "aws_security_group" "fargate_frontend_sg" {
+  name        = "${var.project}-${var.environment}-fargate-frontend-sg"
+  description = "Security group for Frontend Fargate containers"
+  vpc_id      = aws_vpc.vpc.id
+
+  # ALBからのリクエスト
+  ingress {
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-fargate-frontend-sg"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+# Fargate（バックエンド）のセキュリティグループ
+resource "aws_security_group" "fargate_backend_sg" {
+  name        = "${var.project}-${var.environment}-fargate-backend-sg"
+  description = "Security group for Backend Fargate containers"
+  vpc_id      = aws_vpc.vpc.id
+
+  # フロントエンドからのリクエスト
+  ingress {
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.fargate_frontend_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-fargate-backend-sg"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+# AuroraDBのセキュリティグループ
+resource "aws_security_group" "aurora_sg" {
+  name        = "${var.project}-${var.environment}-aurora-sg"
+  description = "Security group for Aurora DB"
+  vpc_id      = aws_vpc.vpc.id
+
+  # バックエンドからのリクエスト
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.fargate_backend_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-aurora-sg"
+    Project = var.project
+    Env     = var.environment
+  }
+}
