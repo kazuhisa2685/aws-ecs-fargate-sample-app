@@ -145,3 +145,52 @@ resource "aws_route_table_association" "public_mgmt" {
   subnet_id      = aws_subnet.public_subnet_mgmt.id
   route_table_id = aws_route_table.public_route_table_mgmt.id
 }
+
+# プライベートサブネット(app)用のルートテーブル
+resource "aws_route_table" "private_route_table_app" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-route-table-app"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+resource "aws_route_table_association" "private_app" {
+  subnet_id      = aws_subnet.private_subnet_app.id
+  route_table_id = aws_route_table.private_route_table_app.id
+}
+
+# プライベートサブネット(db)用のルートテーブル
+resource "aws_route_table" "private_route_table_db" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-route-table-db"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+resource "aws_route_table_association" "private_db" {
+  subnet_id      = aws_subnet.private_subnet_db.id
+  route_table_id = aws_route_table.private_route_table_db.id
+}
+
+# プライベートサブネット(egress)用のルートテーブル
+resource "aws_route_table" "private_route_table_egress" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-route-table-egress"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+resource "aws_route_table_association" "private_egress" {
+  subnet_id      = aws_subnet.private_subnet_egress.id
+  route_table_id = aws_route_table.private_route_table_egress.id
+}
+
