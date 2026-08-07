@@ -49,3 +49,10 @@ module "vpc" {
   project     = local.project
   environment = local.environment
 }
+
+module "ec2" {
+  source      = "../../modules/ec2"
+  project     = local.project
+  environment = local.environment
+  subnet_id  = module.vpc.public_subnet_mgmt_id
+}
