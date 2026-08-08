@@ -379,3 +379,66 @@ resource "aws_security_group" "vpc_endpoint_sg" {
     Env     = var.environment
   }
 }
+
+###############################################
+# VPCエンドポイント（ゲートウェイ型）
+###############################################
+
+# VPCエンドポイント（S3用）
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id            = aws_vpc.vpc.id
+  service_name      = "com.amazonaws.ap-northeast-1.s3"
+  vpc_endpoint_type = "Gateway"
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-vpc-endpoint-s3"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+###############################################
+# VPCエンドポイント（インターフェイス型）
+###############################################
+
+# VPCエンドポイント（ECR API用）
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id            = aws_vpc.vpc.id
+  service_name      = "com.amazonaws.ap-northeast-1.ecr.api"
+  vpc_endpoint_type = "Interface"
+  security_group_ids = [
+    aws_security_group.vpc_endpoint_sg.id
+  ]
+  subnet_ids = [
+    aws_subnet.private_subnet_egress.id
+  ]
+
+  private_dns_enabled = true
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-vpc-endpoint-ecr-api"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+# VPCエンドポイント（ECR DKR用）
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id            = aws_vpc.vpc.id
+  service_name      = "com.amazonaws.ap-northeast-1.ecr.dkr"
+  vpc_endpoint_type = "Interface"
+  security_group_ids = [
+    aws_security_group.vpc_endpoint_sg.id
+  ]
+  subnet_ids = [
+    aws_subnet.private_subnet_egress.id
+  ]
+
+  private_dns_enabled = true
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-vpc-endpoint-ecr-dkr"
+    Project = var.project
+    Env     = var.environment
+  }
+}
