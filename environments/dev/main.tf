@@ -51,12 +51,12 @@ module "vpc" {
 }
 
 module "ec2" {
-  source      = "../../modules/ec2"
-  project     = local.project
-  environment = local.environment
-  subnet_id  = module.vpc.public_subnet_mgmt_id
+  source               = "../../modules/ec2"
+  project              = local.project
+  environment          = local.environment
+  subnet_id            = module.vpc.public_subnet_mgmt_id
   iam_instance_profile = module.iam.iam_instance_profile.name
-  mgmt_sg_id = module.vpc.mgmt_sg_id
+  mgmt_sg_id           = module.vpc.mgmt_sg_id
 }
 
 module "iam" {
@@ -72,11 +72,11 @@ module "ecr" {
 }
 
 module "alb" {
-  source      = "../../modules/alb"
-  project     = local.project
-  environment = local.environment
-  public_subnet_ingress_id = module.vpc.public_subnet_app_id
+  source                      = "../../modules/alb"
+  project                     = local.project
+  environment                 = local.environment
+  public_subnet_ingress_id    = module.vpc.public_subnet_app_id
   public_subnet_ingress_id-1c = module.vpc.public_subnet_app_id-1c
-  alb_sg_id = module.vpc.alb_sg_id
-  vpc_id = module.vpc.vpc_id
+  alb_sg_id                   = module.vpc.alb_sg_id
+  vpc_id                      = module.vpc.vpc_id
 }

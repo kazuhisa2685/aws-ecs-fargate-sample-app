@@ -4,10 +4,10 @@
 
 # 開発端末用EC2インスタンス
 resource "aws_instance" "dev_instance" {
-  ami           = "ami-0126975fb247bf2e7"
-  instance_type = "t3.large"
-  subnet_id     = "${var.subnet_id}"
-  iam_instance_profile = "${var.iam_instance_profile}"
+  ami                  = "ami-0126975fb247bf2e7"
+  instance_type        = "t3.large"
+  subnet_id            = var.subnet_id
+  iam_instance_profile = var.iam_instance_profile
 
   vpc_security_group_ids = [
     "${var.mgmt_sg_id}"

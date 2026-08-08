@@ -2,7 +2,7 @@
 # VPC
 ###############################################
 resource "aws_vpc" "vpc" {
-  cidr_block                       = "192.168.0.0/20" 
+  cidr_block                       = "192.168.0.0/20"
   instance_tenancy                 = "default" #基本はデフォルトでよい
   enable_dns_support               = true      #DNS解決
   enable_dns_hostnames             = true      #DNSホスト名
@@ -49,9 +49,9 @@ resource "aws_subnet" "public_subnet_mgmt" {
 
 # アプリケーション配置用のプライベートサブネット
 resource "aws_subnet" "private_subnet_app" {
-  vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "192.168.3.0/24"
-  availability_zone       = "ap-northeast-1a"
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "192.168.3.0/24"
+  availability_zone = "ap-northeast-1a"
 
   tags = {
     Name    = "${var.project}-${var.environment}-private-subnet-app"
@@ -62,9 +62,9 @@ resource "aws_subnet" "private_subnet_app" {
 
 # データベース配置用のプライベートサブネット
 resource "aws_subnet" "private_subnet_db" {
-  vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "192.168.4.0/24"
-  availability_zone       = "ap-northeast-1a"
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "192.168.4.0/24"
+  availability_zone = "ap-northeast-1a"
 
   tags = {
     Name    = "${var.project}-${var.environment}-private-subnet-db"
@@ -75,9 +75,9 @@ resource "aws_subnet" "private_subnet_db" {
 
 # アウトバウンド通信用のプライベートサブネット
 resource "aws_subnet" "private_subnet_egress" {
-  vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "192.168.5.0/24"
-  availability_zone       = "ap-northeast-1a"
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "192.168.5.0/24"
+  availability_zone = "ap-northeast-1a"
 
   tags = {
     Name    = "${var.project}-${var.environment}-private-subnet-egress"
@@ -120,9 +120,9 @@ resource "aws_subnet" "public_subnet_mgmt-1c" {
 
 # アプリケーション配置用のプライベートサブネット
 resource "aws_subnet" "private_subnet_app-1c" {
-  vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "192.168.8.0/24"
-  availability_zone       = "ap-northeast-1c"
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "192.168.8.0/24"
+  availability_zone = "ap-northeast-1c"
 
   tags = {
     Name    = "${var.project}-${var.environment}-private-subnet-app-1c"
@@ -133,9 +133,9 @@ resource "aws_subnet" "private_subnet_app-1c" {
 
 # データベース配置用のプライベートサブネット
 resource "aws_subnet" "private_subnet_db-1c" {
-  vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "192.168.9.0/24"
-  availability_zone       = "ap-northeast-1c"
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "192.168.9.0/24"
+  availability_zone = "ap-northeast-1c"
 
   tags = {
     Name    = "${var.project}-${var.environment}-private-subnet-db-1c"
@@ -146,9 +146,9 @@ resource "aws_subnet" "private_subnet_db-1c" {
 
 # アウトバウンド通信用のプライベートサブネット
 resource "aws_subnet" "private_subnet_egress-1c" {
-  vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "192.168.10.0/24"
-  availability_zone       = "ap-northeast-1c"
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "192.168.10.0/24"
+  availability_zone = "ap-northeast-1c"
 
   tags = {
     Name    = "${var.project}-${var.environment}-private-subnet-egress-1c"

@@ -8,7 +8,7 @@ resource "aws_lb" "main" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [var.alb_sg_id]
-  subnets            = [
+  subnets = [
     var.public_subnet_ingress_id,
     var.public_subnet_ingress_id-1c
   ]
@@ -27,7 +27,7 @@ resource "aws_lb_target_group" "tg_blue" {
   name     = "${var.project}-${var.environment}-tg-blue"
   port     = 8080
   protocol = "HTTP"
-  vpc_id   = "${var.vpc_id}"
+  vpc_id   = var.vpc_id
 
   health_check {
     path                = "/health"
@@ -50,7 +50,7 @@ resource "aws_lb_target_group" "tg_green" {
   name     = "${var.project}-${var.environment}-tg-green"
   port     = 8080
   protocol = "HTTP"
-  vpc_id   = "${var.vpc_id}"
+  vpc_id   = var.vpc_id
 
   health_check {
     path                = "/health"
