@@ -70,3 +70,13 @@ module "ecr" {
   project     = local.project
   environment = local.environment
 }
+
+module "alb" {
+  source      = "../../modules/alb"
+  project     = local.project
+  environment = local.environment
+  public_subnet_ingress_id = module.vpc.public_subnet_app_id
+  public_subnet_ingress_id-1c = module.vpc.public_subnet_app_id-1c
+  alb_sg_id = module.vpc.alb_sg_id
+  vpc_id = module.vpc.vpc_id
+}

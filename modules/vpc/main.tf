@@ -16,7 +16,7 @@ resource "aws_vpc" "vpc" {
 }
 
 ###############################################
-# Subnet
+# Subnet (availability zone: ap-northeast-1a)
 ###############################################
 
 # インバウンド通信用のパブリックサブネット
@@ -87,6 +87,77 @@ resource "aws_subnet" "private_subnet_egress" {
 }
 
 ###############################################
+# # Subnet (availability zone: ap-northeast-1c)
+###############################################
+
+# インバウンド通信用のパブリックサブネット
+resource "aws_subnet" "public_subnet_ingress-1c" {
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "192.168.6.0/24"
+  availability_zone       = "ap-northeast-1c"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-public-subnet-ingress-1c"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+# 開発環境配置用のパブリックサブネット
+resource "aws_subnet" "public_subnet_mgmt-1c" {
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "192.168.7.0/24"
+  availability_zone       = "ap-northeast-1c"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-public-subnet-mgmt-1c"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+# アプリケーション配置用のプライベートサブネット
+resource "aws_subnet" "private_subnet_app-1c" {
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "192.168.8.0/24"
+  availability_zone       = "ap-northeast-1c"
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-subnet-app-1c"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+# データベース配置用のプライベートサブネット
+resource "aws_subnet" "private_subnet_db-1c" {
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "192.168.9.0/24"
+  availability_zone       = "ap-northeast-1c"
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-subnet-db-1c"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+# アウトバウンド通信用のプライベートサブネット
+resource "aws_subnet" "private_subnet_egress-1c" {
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "192.168.10.0/24"
+  availability_zone       = "ap-northeast-1c"
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-subnet-egress-1c"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+###############################################
 # Internet Gateway
 ###############################################
 
@@ -125,6 +196,11 @@ resource "aws_route_table_association" "public_ingress" {
   route_table_id = aws_route_table.public_route_table_ingress.id
 }
 
+resource "aws_route_table_association" "public_ingress-1c" {
+  subnet_id      = aws_subnet.public_subnet_ingress-1c.id
+  route_table_id = aws_route_table.public_route_table_ingress.id
+}
+
 # パブリックサブネット(mgmt)用のルートテーブル
 resource "aws_route_table" "public_route_table_mgmt" {
   vpc_id = aws_vpc.vpc.id
@@ -146,6 +222,11 @@ resource "aws_route_table_association" "public_mgmt" {
   route_table_id = aws_route_table.public_route_table_mgmt.id
 }
 
+resource "aws_route_table_association" "public_mgmt-1c" {
+  subnet_id      = aws_subnet.public_subnet_mgmt-1c.id
+  route_table_id = aws_route_table.public_route_table_mgmt.id
+}
+
 # プライベートサブネット(app)用のルートテーブル
 resource "aws_route_table" "private_route_table_app" {
   vpc_id = aws_vpc.vpc.id
@@ -159,6 +240,11 @@ resource "aws_route_table" "private_route_table_app" {
 
 resource "aws_route_table_association" "private_app" {
   subnet_id      = aws_subnet.private_subnet_app.id
+  route_table_id = aws_route_table.private_route_table_app.id
+}
+
+resource "aws_route_table_association" "private_app-1c" {
+  subnet_id      = aws_subnet.private_subnet_app-1c.id
   route_table_id = aws_route_table.private_route_table_app.id
 }
 
@@ -178,6 +264,11 @@ resource "aws_route_table_association" "private_db" {
   route_table_id = aws_route_table.private_route_table_db.id
 }
 
+resource "aws_route_table_association" "private_db-1c" {
+  subnet_id      = aws_subnet.private_subnet_db-1c.id
+  route_table_id = aws_route_table.private_route_table_db.id
+}
+
 # プライベートサブネット(egress)用のルートテーブル
 resource "aws_route_table" "private_route_table_egress" {
   vpc_id = aws_vpc.vpc.id
@@ -191,6 +282,11 @@ resource "aws_route_table" "private_route_table_egress" {
 
 resource "aws_route_table_association" "private_egress" {
   subnet_id      = aws_subnet.private_subnet_egress.id
+  route_table_id = aws_route_table.private_route_table_egress.id
+}
+
+resource "aws_route_table_association" "private_egress-1c" {
+  subnet_id      = aws_subnet.private_subnet_egress-1c.id
   route_table_id = aws_route_table.private_route_table_egress.id
 }
 

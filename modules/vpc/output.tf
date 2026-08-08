@@ -17,3 +17,19 @@ output "vpc_endpoint_sg_id" {
 output "mgmt_sg_id" {
   value = aws_security_group.mgmt_sg.id
 }
+
+output "public_subnet_app_id" {
+  value = aws_subnet.public_subnet_ingress.id
+}
+
+output "alb_sg_id" {
+  value = aws_security_group.alb_sg.id
+}
+
+#############################################
+# availability_zone 1c
+#############################################
+
+output "public_subnet_app_id-1c" {
+  value = aws_subnet.public_subnet_ingress-1c.id
+}
