@@ -55,4 +55,18 @@ module "ec2" {
   project     = local.project
   environment = local.environment
   subnet_id  = module.vpc.public_subnet_mgmt_id
+  iam_instance_profile = module.iam.iam_instance_profile.name
+  mgmt_sg_id = module.vpc.mgmt_sg_id
+}
+
+module "iam" {
+  source      = "../../modules/iam"
+  project     = local.project
+  environment = local.environment
+}
+
+module "ecr" {
+  source      = "../../modules/ecr"
+  project     = local.project
+  environment = local.environment
 }

@@ -3,17 +3,7 @@
 # ユースケース：他の Terraform モジュールやステージへの値の受け渡し
 # 　　　　　　　CI/CD や外部スクリプトへの値の引き渡し
 ####################################################
-output "vpc_id" {
-  value = aws_vpc.vpc.id
-}
-output "public_subnet_mgmt_id" {
-  value = aws_subnet.public_subnet_mgmt.id
-}
 
-output "vpc_endpoint_sg_id" {
-  value = aws_security_group.vpc_endpoint_sg.id
-}
-
-output "mgmt_sg_id" {
-  value = aws_security_group.mgmt_sg.id
+output "iam_instance_profile" {
+  value = aws_iam_instance_profile.ssm_profile
 }
