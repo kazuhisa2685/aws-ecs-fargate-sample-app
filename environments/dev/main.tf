@@ -71,12 +71,25 @@ module "ecr" {
   environment = local.environment
 }
 
+module "ecs" {
+  source      = "../../modules/ecs"
+  project     = local.project
+  environment = local.environment
+  private_subnet_id = module.vpc.private_subnet_app_id
+  private_subnet_id-1c = module.vpc.private_subnet_app_id-1c
+  fargate_frontend_sg_id = module.vpc.fargate_frontend_sg_id
+}
+
 module "alb" {
   source                      = "../../modules/alb"
   project                     = local.project
   environment                 = local.environment
-  public_subnet_ingress_id    = module.vpc.public_subnet_app_id
-  public_subnet_ingress_id-1c = module.vpc.public_subnet_app_id-1c
+  public_subnet_ingress_id    = module.vpc.public_subnet_ingress_id
+  public_subnet_ingress_id-1c = module.vpc.public_subnet_ingress_id-1c
   alb_sg_id                   = module.vpc.alb_sg_id
   vpc_id                      = module.vpc.vpc_id
+  private_subnet_id = module.vpc.private_subnet_app_id
+  private_subnet_id-1c = module.vpc.private_subnet_app_id-1c
+  fargate_frontend_sg_id = module.vpc.fargate_frontend_sg_id
+  ecs_cluster_id = module.ecs.ecs_cluster_id
 }

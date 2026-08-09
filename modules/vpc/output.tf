@@ -18,18 +18,28 @@ output "mgmt_sg_id" {
   value = aws_security_group.mgmt_sg.id
 }
 
-output "public_subnet_app_id" {
+output "public_subnet_ingress_id" {
   value = aws_subnet.public_subnet_ingress.id
 }
 
 output "alb_sg_id" {
   value = aws_security_group.alb_sg.id
 }
+output "fargate_frontend_sg_id" {
+  value = aws_security_group.fargate_frontend_sg.id
+}
+output "private_subnet_app_id" {
+  value = aws_subnet.private_subnet_app.id
+}
 
 #############################################
 # availability_zone 1c
 #############################################
 
-output "public_subnet_app_id-1c" {
+output "public_subnet_ingress_id-1c" {
   value = aws_subnet.public_subnet_ingress-1c.id
+}
+
+output "private_subnet_app_id-1c" {
+  value = aws_subnet.private_subnet_app-1c.id
 }
