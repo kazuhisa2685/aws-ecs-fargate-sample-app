@@ -99,40 +99,65 @@ resource "aws_lb_listener" "https" {
   }
 }
 
-###############################################
-# ECS サービス (組み込み Blue/Green 設定)
-# fargateだと、IPで分けることになるからポートで転送先を明示的に変える必要はない？っぽい
-###############################################
-resource "aws_ecs_service" "app" {
-  name            = "${var.project}-${var.environment}-service"
-  cluster         = var.ecs_cluster_id
-  task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = 2
-  launch_type     = "FARGATE"
+# リスナールール（本番）: ALB の場合は Listener Rule ARN を ECS に渡す必要がある
+resource "aws_lb_listener_rule" "prod" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 100
 
-  # ★ ネイティブ Blue/Green デプロイの設定
-  deployment_configuration {
-    strategy             = "BLUE_GREEN"
-    bake_time_in_minutes = 5 # 切り替え後の監視時間（分）。この間に問題があれば自動/手動ロールバック可能
+  action {
+    type = "forward"
+    forward {
+      target_group {
+        arn    = aws_lb_target_group.tg_blue.arn
+        weight = 100
+      }
+      target_group {
+        arn    = aws_lb_target_group.tg_green.arn
+        weight = 0
+      }
+    }
   }
 
-  # ターゲットグループ（Blue と Green の両方を関連付け）
-  load_balancer {
-    target_group_arn = aws_lb_target_group.tg_blue.arn
-    container_name   = "app"
-    container_port   = 8080
+  condition {
+    path_pattern {
+      values = ["/"]
+    }
   }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.tg_green.arn
-    container_name   = "app"
-    container_port   = 8080
-  }
-
-  network_configuration {
-    subnets         = [var.private_subnet_id, var.private_subnet_id-1c]
-    security_groups = [var.fargate_frontend_sg_id]
-  }
-
-  depends_on = [aws_lb_listener.http]
 }
+# ###############################################
+# # ECS サービス (組み込み Blue/Green 設定)
+# # fargateだと、IPで分けることになるからポートで転送先を明示的に変える必要はない？っぽい
+# ###############################################
+# resource "aws_ecs_service" "app" {
+#   name            = "${var.project}-${var.environment}-service"
+#   cluster         = var.ecs_cluster_id
+#   task_definition = aws_ecs_task_definition.app.arn
+#   desired_count   = 2
+#   launch_type     = "FARGATE"
+
+#   # ★ ネイティブ Blue/Green デプロイの設定
+#   deployment_configuration {
+#     strategy             = "BLUE_GREEN"
+#     bake_time_in_minutes = 5 # 切り替え後の監視時間（分）。この間に問題があれば自動/手動ロールバック可能
+#   }
+
+#   # ターゲットグループ（Blue と Green の両方を関連付け）
+#   load_balancer {
+#     target_group_arn = aws_lb_target_group.tg_blue.arn
+#     container_name   = "app"
+#     container_port   = 8080
+#   }
+
+#   load_balancer {
+#     target_group_arn = aws_lb_target_group.tg_green.arn
+#     container_name   = "app"
+#     container_port   = 8080
+#   }
+
+#   network_configuration {
+#     subnets         = [var.private_subnet_id, var.private_subnet_id-1c]
+#     security_groups = [var.fargate_frontend_sg_id]
+#   }
+
+#   depends_on = [aws_lb_listener.http]
+# }

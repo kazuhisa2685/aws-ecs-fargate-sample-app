@@ -49,12 +49,16 @@ resource "aws_ecs_service" "ecs_frontend_service" {
 
     # 組み込み Blue/Green 用の設定
     advanced_configuration {
-      alternate_target_group_arn = aws_lb_target_group.tg_green.arn       # 代替（サブ/Green側）のターゲットグループ
-      production_listener_rule   = aws_lb_listener.http.arn               # 本番トラフィックをルーティングしている ALB リスナールール
-      # test_listener_rule       = aws_lb_listener.test.arn               # テストトラフィック用（オプション：事前にテスト用ポートで動作確認したい場合）
-      role_arn                   = aws_iam_role.ecs_alb_service_role.arn  # ECS が ALB 設定を操作するための IAM ロール
+      # alternate_target_group_arn = "${var.tg_green_arn}"       # 代替（サブ/Green側）のターゲットグループ
+      # production_listener_rule   = "${var.alb_listener_arn}"               # 本番トラフィックをルーティングしている ALB リスナールール
+      # # test_listener_rule       = aws_lb_listener.test.arn               # テストトラフィック用（オプション：事前にテスト用ポートで動作確認したい場合）
+      # role_arn                   = aws_iam_role.ecs_alb_service_role.arn  # ECS が ALB 設定を操作するための IAM ロール
+      alternate_target_group_arn    = "${var.tg_green_arn}"       # 代替（サブ/Green側）のターゲットグループ
+      production_listener_rule      = "${var.production_listener_rule_arn}"      # 本番トラフィックをルーティングしている ALB リスナールールの ARN（ALB では Rule ARN が必要）
+      # test_listener_rule          = "${var.test_listener_rule_arn}"            # テストトラフィック用（オプション）
+      role_arn                      = aws_iam_role.ecs_alb_service_role.arn  # ECS が ALB 設定を操作するための IAM ロール
     }
-    target_group_arn = aws_lb_target_group.tg_blue.arn                    # メイン（プライマリ/Blue側）のターゲットグループ
+    target_group_arn = "${var.tg_blue_arn}"                       # メイン（プライマリ/Blue側）のターゲットグループ
   }
 
   network_configuration {
@@ -70,7 +74,7 @@ resource "aws_ecs_service" "ecs_frontend_service" {
     ]
   }
 
-  depends_on = [aws_lb_listener.http]
+  #depends_on = [aws_lb_target_group.tg_blue]
 }
 
 ################################################

@@ -78,6 +78,11 @@ module "ecs" {
   private_subnet_id = module.vpc.private_subnet_app_id
   private_subnet_id-1c = module.vpc.private_subnet_app_id-1c
   fargate_frontend_sg_id = module.vpc.fargate_frontend_sg_id
+  tg_green_arn = module.alb.tg_green_arn
+  tg_blue_arn = module.alb.tg_blue_arn
+  alb_listener_arn = module.alb.alb_listener_arn
+  production_listener_rule_arn = module.alb.alb_listener_rule_prod_arn
+  #test_listener_rule_arn = module.alb.alb_listener_rule_test_arn
 }
 
 module "alb" {
