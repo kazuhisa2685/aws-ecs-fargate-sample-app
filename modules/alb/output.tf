@@ -1,7 +1,6 @@
 output "tg_blue_arn" {
     value = aws_lb_target_group.tg_blue.arn
 }
-
 output "tg_green_arn" {
     value = aws_lb_target_group.tg_green.arn
 }

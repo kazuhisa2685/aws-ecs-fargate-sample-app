@@ -49,16 +49,12 @@ resource "aws_ecs_service" "ecs_frontend_service" {
 
     # 組み込み Blue/Green 用の設定
     advanced_configuration {
-      # alternate_target_group_arn = "${var.tg_green_arn}"       # 代替（サブ/Green側）のターゲットグループ
-      # production_listener_rule   = "${var.alb_listener_arn}"               # 本番トラフィックをルーティングしている ALB リスナールール
-      # # test_listener_rule       = aws_lb_listener.test.arn               # テストトラフィック用（オプション：事前にテスト用ポートで動作確認したい場合）
-      # role_arn                   = aws_iam_role.ecs_alb_service_role.arn  # ECS が ALB 設定を操作するための IAM ロール
       alternate_target_group_arn    = "${var.tg_green_arn}"       # 代替（サブ/Green側）のターゲットグループ
       production_listener_rule      = "${var.production_listener_rule_arn}"      # 本番トラフィックをルーティングしている ALB リスナールールの ARN（ALB では Rule ARN が必要）
       # test_listener_rule          = "${var.test_listener_rule_arn}"            # テストトラフィック用（オプション）
       role_arn                      = aws_iam_role.ecs_alb_service_role.arn  # ECS が ALB 設定を操作するための IAM ロール
     }
-    target_group_arn = "${var.tg_blue_arn}"                       # メイン（プライマリ/Blue側）のターゲットグループ
+    target_group_arn = "${var.tg_blue_arn}"  # メイン（プライマリ/Blue側）のターゲットグループ
   }
 
   network_configuration {
@@ -73,7 +69,7 @@ resource "aws_ecs_service" "ecs_frontend_service" {
       task_definition,
     ]
   }
-
+  
   #depends_on = [aws_lb_target_group.tg_blue]
 }
 
@@ -91,7 +87,7 @@ resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
   container_definitions = jsonencode([
     {
       name      = "app"
-      image     = "nginx:latest" # 実際はECR等のURLを指定
+      image     = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-frontend-app:latest" # 実際はECR等のURLを指定
       essential = true
       portMappings = [
         {
@@ -139,10 +135,11 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-# B. ECS 組み込み Blue/Green 用のサービスロール (ECSがALBを直接操作するためのロール)
+# B. ECSがALBを直接操作するためのロール
 resource "aws_iam_role" "ecs_alb_service_role" {
   name = "${var.project}-${var.environment}-ecs-alb-service-role"
 
+  #信頼ポリシー
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -157,7 +154,30 @@ resource "aws_iam_role" "ecs_alb_service_role" {
   })
 }
 
+# アイデンティティポリシーを追加(これがないと、ECSがALBのリスナーやターゲットグループを切り替えられない)
+resource "aws_iam_role_policy" "ecs_alb_service_role_policy" {
+  name = "${var.project}-${var.environment}-ecs-alb-service-policy"
+  role = aws_iam_role.ecs_alb_service_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "elasticloadbalancing:ModifyRule",
+          "elasticloadbalancing:DescribeRules",
+          "elasticloadbalancing:DescribeListeners"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 # ECS が ALB リスナーやターゲットグループを切り替えるための権限
+#必要かどうか検討中。これがあってもうまくいかなかったので、上記のポリシーを追加した。
+#"elasticloadbalancing:ModifyRule"がなくてNGになった
 resource "aws_iam_role_policy_attachment" "ecs_alb_service_role_policy" {
   role       = aws_iam_role.ecs_alb_service_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
