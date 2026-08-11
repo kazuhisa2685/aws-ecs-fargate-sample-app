@@ -40,21 +40,21 @@ resource "aws_ecs_service" "ecs_frontend_service" {
   desired_count   = 2
   launch_type     = "FARGATE"
   deployment_configuration {
-    strategy             = "BLUE_GREEN"     # 組み込み Blue/Green を使用
-    bake_time_in_minutes = 5                # 新バージョン(Green)へ切り替えた後、旧タスク(Blue)を削除するまでの待機時間（分）
+    strategy             = "BLUE_GREEN" # 組み込み Blue/Green を使用
+    bake_time_in_minutes = 5            # 新バージョン(Green)へ切り替えた後、旧タスク(Blue)を削除するまでの待機時間（分）
   }
   load_balancer {
-    container_name   = "app"
-    container_port   = 8080
+    container_name = "app"
+    container_port = 8080
 
     # 組み込み Blue/Green 用の設定
     advanced_configuration {
-      alternate_target_group_arn    = "${var.tg_green_arn}"       # 代替（サブ/Green側）のターゲットグループ
-      production_listener_rule      = "${var.production_listener_rule_arn}"      # 本番トラフィックをルーティングしている ALB リスナールールの ARN（ALB では Rule ARN が必要）
+      alternate_target_group_arn = var.tg_green_arn                 # 代替（サブ/Green側）のターゲットグループ
+      production_listener_rule   = var.production_listener_rule_arn # 本番トラフィックをルーティングしている ALB リスナールールの ARN（ALB では Rule ARN が必要）
       # test_listener_rule          = "${var.test_listener_rule_arn}"            # テストトラフィック用（オプション）
-      role_arn                      = aws_iam_role.ecs_alb_service_role.arn  # ECS が ALB 設定を操作するための IAM ロール
+      role_arn = aws_iam_role.ecs_alb_service_role.arn # ECS が ALB 設定を操作するための IAM ロール
     }
-    target_group_arn = "${var.tg_blue_arn}"  # メイン（プライマリ/Blue側）のターゲットグループ
+    target_group_arn = var.tg_blue_arn # メイン（プライマリ/Blue側）のターゲットグループ
   }
 
   network_configuration {
@@ -69,7 +69,7 @@ resource "aws_ecs_service" "ecs_frontend_service" {
       task_definition,
     ]
   }
-  
+
   #depends_on = [aws_lb_target_group.tg_blue]
 }
 

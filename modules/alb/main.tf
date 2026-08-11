@@ -24,11 +24,11 @@ resource "aws_lb" "main" {
 
 # ターゲットグループ(青)
 resource "aws_lb_target_group" "tg_blue" {
-  name     = "${var.project}-${var.environment}-tg-blue"
-  port     = 8080
-  protocol = "HTTP"
+  name        = "${var.project}-${var.environment}-tg-blue"
+  port        = 8080
+  protocol    = "HTTP"
   target_type = "ip" #Fargateでは、タスクごとにENIが作成され、タスク自身がVPC内のプライベートIPアドレスを持つため
-  vpc_id   = var.vpc_id
+  vpc_id      = var.vpc_id
 
   health_check {
     path                = "/health"
@@ -48,11 +48,11 @@ resource "aws_lb_target_group" "tg_blue" {
 
 # ターゲットグループ(緑)
 resource "aws_lb_target_group" "tg_green" {
-  name     = "${var.project}-${var.environment}-tg-green"
-  port     = 8080
-  protocol = "HTTP"
+  name        = "${var.project}-${var.environment}-tg-green"
+  port        = 8080
+  protocol    = "HTTP"
   target_type = "ip" #Fargateでは、タスクごとにENIが作成され、タスク自身がVPC内のプライベートIPアドレスを持つため
-  vpc_id   = var.vpc_id
+  vpc_id      = var.vpc_id
 
   health_check {
     path                = "/health"
