@@ -459,7 +459,10 @@ resource "aws_security_group" "vpc_endpoint_sg" {
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
-    security_groups = [aws_security_group.fargate_backend_sg.id]
+    security_groups = [
+      aws_security_group.fargate_frontend_sg.id, #ここも追加。VPCエンドポイントを通してECRにアクセスするため、フロントエンドのFargateからのアクセスも許可する必要がある
+      aws_security_group.fargate_backend_sg.id
+    ]
   }
 
   egress {

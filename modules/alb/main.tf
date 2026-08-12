@@ -5,7 +5,7 @@
 # ロードバランサー
 resource "aws_lb" "main" {
   name               = "${var.project}-${var.environment}-lb"
-  internal           = false
+  internal           = false #インターネット向けという意味
   load_balancer_type = "application"
   security_groups    = [var.alb_sg_id]
   subnets = [
@@ -31,12 +31,12 @@ resource "aws_lb_target_group" "tg_blue" {
   vpc_id      = var.vpc_id
 
   health_check {
-    path                = "/health"
-    interval            = 30
+    path                = "/healthcheck"
+    interval            = 15
     timeout             = 5
-    healthy_threshold   = 2
+    healthy_threshold   = 3
     unhealthy_threshold = 2
-    matcher             = "200-399"
+    matcher             = "200"
   }
 
   tags = {
@@ -55,12 +55,12 @@ resource "aws_lb_target_group" "tg_green" {
   vpc_id      = var.vpc_id
 
   health_check {
-    path                = "/health"
-    interval            = 30
+    path                = "/healthcheck"
+    interval            = 15
     timeout             = 5
-    healthy_threshold   = 2
+    healthy_threshold   = 3
     unhealthy_threshold = 2
-    matcher             = "200-399"
+    matcher             = "200"
   }
 
   tags = {

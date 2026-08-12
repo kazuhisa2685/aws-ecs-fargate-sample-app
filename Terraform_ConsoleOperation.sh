@@ -6,6 +6,8 @@ terraform apply -auto-approve
 #　yesなしdestroy
 terraform destroy -auto-approve
 
+terraform destroy -target=aws_resource_type.name
+
 #　サブディレクトリまでフォーマットを整えたいとき
 terraform fmt -recursive
 
@@ -35,3 +37,7 @@ terraform state rm <リソース名>
 
 # 依存関係をグラフ化]
 terraform graph > portfolio.dot
+
+#サービス削除
+#ECSサービス削除
+terraform destroy -target=module.ecs.aws_ecs_service.ecs_frontend_service

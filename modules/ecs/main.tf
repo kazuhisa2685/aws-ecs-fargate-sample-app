@@ -7,7 +7,7 @@ resource "aws_ecs_cluster" "ecs_frontend_cluster" {
   # Container Insights (メトリクス監視) を有効化（任意）
   setting {
     name  = "containerInsights"
-    value = "enabled"
+    value = "enhanced"
   }
 
   tags = {
@@ -30,9 +30,9 @@ resource "aws_ecs_cluster_capacity_providers" "ecs_cluster_capacity_providers" {
   }
 }
 
-################################################
-# ECS サービス用
-################################################
+# ################################################
+# # ECS サービス用
+# ################################################
 resource "aws_ecs_service" "ecs_frontend_service" {
   name            = "${var.project}-${var.environment}-service"
   cluster         = aws_ecs_cluster.ecs_frontend_cluster.id
@@ -80,15 +80,14 @@ resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
   family                   = "${var.project}-${var.environment}-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "256" # 0.25 vCPU
-  memory                   = "512" # 512 MiB
+  cpu                      = "1" # 0.25 vCPU
+  memory                   = "2048" # 2048 MiB
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
 
   container_definitions = jsonencode([
     {
       name      = "app"
-      image     = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-frontend-app:latest" # 実際はECR等のURLを指定
-      essential = true
+      image     = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-frontend:latest" 
       portMappings = [
         {
           containerPort = 8080
@@ -106,79 +105,4 @@ resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
       # }
     }
   ])
-}
-
-###############################################
-# IAMロール関連
-###############################################
-
-# A. タスク実行ロール (ECRからの画像引き出しや CloudWatch Logs への書き込み用)
-resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "${var.project}-${var.environment}-ecs-task-execution-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ecs-tasks.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
-  role       = aws_iam_role.ecs_task_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
-# B. ECSがALBを直接操作するためのロール
-resource "aws_iam_role" "ecs_alb_service_role" {
-  name = "${var.project}-${var.environment}-ecs-alb-service-role"
-
-  #信頼ポリシー
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ecs.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
-
-# アイデンティティポリシーを追加(これがないと、ECSがALBのリスナーやターゲットグループを切り替えられない)
-resource "aws_iam_role_policy" "ecs_alb_service_role_policy" {
-  name = "${var.project}-${var.environment}-ecs-alb-service-policy"
-  role = aws_iam_role.ecs_alb_service_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "elasticloadbalancing:ModifyRule",
-          "elasticloadbalancing:DescribeRules",
-          "elasticloadbalancing:DescribeListeners"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
-
-# ECS が ALB リスナーやターゲットグループを切り替えるための権限
-#必要かどうか検討中。これがあってもうまくいかなかったので、上記のポリシーを追加した。
-#"elasticloadbalancing:ModifyRule"がなくてNGになった
-resource "aws_iam_role_policy_attachment" "ecs_alb_service_role_policy" {
-  role       = aws_iam_role.ecs_alb_service_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
 }
