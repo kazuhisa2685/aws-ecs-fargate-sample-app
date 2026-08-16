@@ -2,7 +2,7 @@
 # Terraform configuration
 ####################################################
 terraform {
-  required_version = ">=0.13"
+  required_version = ">=1.10" #use_lockfile はTerraform 1.10以降の機能のため
   required_providers {
     aws = {
       source = "hashicorp/aws"
