@@ -1,5 +1,5 @@
 ###############################################
-# ECS クラスター
+# ECS クラスター (ECS更新時、ヘルスチェック猶予期間を設定することを忘れずに)
 ###############################################
 resource "aws_ecs_cluster" "ecs_frontend_cluster" {
   name = "${var.project}-${var.environment}-cluster"
@@ -80,29 +80,24 @@ resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
   family                   = "${var.project}-${var.environment}-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu = "512"
-  memory = "1024"
+  cpu                      = "512"
+  memory                   = "1024"
   execution_role_arn       = var.ecs_task_execution_role_arn
 
   container_definitions = jsonencode([
     {
       name      = "app"
-      image     = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-frontend:latest" 
+      image     = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-frontend:latest"
+
       portMappings = [
         {
           containerPort = 8080
-          hostPort      = 8080
+          #hostPort      = 8080 #Fargateモードだとこれは動かないらしい。
           protocol      = "tcp"
         }
       ]
-      # logConfiguration = {
-      #   logDriver = "awslogs"
-      #   options = {
-      #     "awslogs-group"         = aws_cloudwatch_log_group.ecs_app.name
-      #     "awslogs-region"        = "ap-northeast-1"
-      #     "awslogs-stream-prefix" = "ecs"
-      #   }
-      # }
+
+      command = ["python", "app.py"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
     }
   ])
 }
