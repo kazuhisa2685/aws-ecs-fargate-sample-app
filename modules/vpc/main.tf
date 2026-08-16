@@ -196,10 +196,6 @@ resource "aws_route_table_association" "public_ingress" {
   route_table_id = aws_route_table.public_route_table_ingress.id
 }
 
-resource "aws_route_table_association" "public_ingress-1c" {
-  subnet_id      = aws_subnet.public_subnet_ingress-1c.id
-  route_table_id = aws_route_table.public_route_table_ingress.id
-}
 
 # パブリックサブネット(mgmt)用のルートテーブル
 resource "aws_route_table" "public_route_table_mgmt" {
@@ -222,10 +218,6 @@ resource "aws_route_table_association" "public_mgmt" {
   route_table_id = aws_route_table.public_route_table_mgmt.id
 }
 
-resource "aws_route_table_association" "public_mgmt-1c" {
-  subnet_id      = aws_subnet.public_subnet_mgmt-1c.id
-  route_table_id = aws_route_table.public_route_table_mgmt.id
-}
 
 # プライベートサブネット(app)用のルートテーブル
 resource "aws_route_table" "private_route_table_app" {
@@ -242,10 +234,9 @@ resource "aws_route_table_association" "private_app" {
   subnet_id      = aws_subnet.private_subnet_app.id
   route_table_id = aws_route_table.private_route_table_app.id
 }
-
-resource "aws_route_table_association" "private_app-1c" {
-  subnet_id      = aws_subnet.private_subnet_app-1c.id
-  route_table_id = aws_route_table.private_route_table_app.id
+resource "aws_vpc_endpoint_route_table_association" "private_app_s3" {
+  vpc_endpoint_id = aws_vpc_endpoint.s3.id                    # S3エンドポイントのID (vpce-...)
+  route_table_id  = aws_route_table.private_route_table_app.id # 紐付けたいルートテーブルのID (rtb-...)
 }
 
 # プライベートサブネット(db)用のルートテーブル
@@ -261,11 +252,6 @@ resource "aws_route_table" "private_route_table_db" {
 
 resource "aws_route_table_association" "private_db" {
   subnet_id      = aws_subnet.private_subnet_db.id
-  route_table_id = aws_route_table.private_route_table_db.id
-}
-
-resource "aws_route_table_association" "private_db-1c" {
-  subnet_id      = aws_subnet.private_subnet_db-1c.id
   route_table_id = aws_route_table.private_route_table_db.id
 }
 
@@ -285,9 +271,79 @@ resource "aws_route_table_association" "private_egress" {
   route_table_id = aws_route_table.private_route_table_egress.id
 }
 
+###############################################
+# Route Table 1c
+###############################################
+
+# パブリックサブネット(ingress)用のルートテーブル
+resource "aws_route_table" "public_route_table_ingress-1c" {
+  vpc_id = aws_vpc.vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-public-route-table-ingress-1c"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+resource "aws_route_table_association" "public_ingress-1c" {
+  subnet_id      = aws_subnet.public_subnet_ingress-1c.id
+  route_table_id = aws_route_table.public_route_table_ingress-1c.id
+}
+
+# プライベートサブネット(app)用のルートテーブル
+resource "aws_route_table" "private_route_table_app-1c" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-route-table-app-1c"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+resource "aws_route_table_association" "private_app-1c" {
+  subnet_id      = aws_subnet.private_subnet_app-1c.id
+  route_table_id = aws_route_table.private_route_table_app-1c.id
+}
+resource "aws_vpc_endpoint_route_table_association" "private_app_s3-1c" {
+  vpc_endpoint_id = aws_vpc_endpoint.s3.id                   
+  route_table_id = aws_route_table.private_route_table_app-1c.id
+}
+# プライベートサブネット(db)用のルートテーブル
+resource "aws_route_table" "private_route_table_db-1c" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-route-table-db-1c"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+resource "aws_route_table_association" "private_db-1c" {
+  subnet_id      = aws_subnet.private_subnet_db-1c.id
+  route_table_id = aws_route_table.private_route_table_db-1c.id
+}
+
+# プライベートサブネット(egress)用のルートテーブル
+resource "aws_route_table" "private_route_table_egress-1c" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-route-table-egress-1c"
+    Project = var.project
+    Env     = var.environment
+  }
+}
 resource "aws_route_table_association" "private_egress-1c" {
   subnet_id      = aws_subnet.private_subnet_egress-1c.id
-  route_table_id = aws_route_table.private_route_table_egress.id
+  route_table_id = aws_route_table.private_route_table_egress-1c.id
 }
 
 ###############################################

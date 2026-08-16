@@ -52,7 +52,7 @@ resource "aws_ecs_service" "ecs_frontend_service" {
       alternate_target_group_arn = var.tg_green_arn                 # 代替（サブ/Green側）のターゲットグループ
       production_listener_rule   = var.production_listener_rule_arn # 本番トラフィックをルーティングしている ALB リスナールールの ARN（ALB では Rule ARN が必要）
       # test_listener_rule          = "${var.test_listener_rule_arn}"            # テストトラフィック用（オプション）
-      role_arn = aws_iam_role.ecs_alb_service_role.arn # ECS が ALB 設定を操作するための IAM ロール
+      role_arn = var.ecs_infrastructure_role_for_load_balancers_arn # ECS が ALB 設定を操作するための IAM ロール
     }
     target_group_arn = var.tg_blue_arn # メイン（プライマリ/Blue側）のターゲットグループ
   }
@@ -80,9 +80,9 @@ resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
   family                   = "${var.project}-${var.environment}-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "1" # 0.25 vCPU
-  memory                   = "2048" # 2048 MiB
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  cpu = "512"
+  memory = "1024"
+  execution_role_arn       = var.ecs_task_execution_role_arn
 
   container_definitions = jsonencode([
     {

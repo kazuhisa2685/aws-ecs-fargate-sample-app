@@ -29,3 +29,9 @@ variable "alb_listener_arn" {
 variable "production_listener_rule_arn" {
   type = string
 }
+variable "ecs_task_execution_role_arn" {
+  type = string
+}
+variable "ecs_infrastructure_role_for_load_balancers_arn" {
+  type = string
+}
