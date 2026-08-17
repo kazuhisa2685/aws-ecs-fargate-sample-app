@@ -3,26 +3,20 @@
 ###############################################
 resource "aws_ecs_cluster" "ecs_frontend_cluster" {
   name = "${var.project}-${var.environment}-cluster"
-
-  # Container Insights (メトリクス監視) を有効化（任意）
   setting {
     name  = "containerInsights"
     value = "enhanced"
   }
-
   tags = {
     Name        = "${var.project}-${var.environment}-cluster"
     Environment = var.environment
     Project     = var.project
   }
 }
-
 # キャパシティプロバイダーの設定 (FARGATE / FARGATE_SPOT)
 resource "aws_ecs_cluster_capacity_providers" "ecs_cluster_capacity_providers" {
   cluster_name = aws_ecs_cluster.ecs_frontend_cluster.name
-
   capacity_providers = ["FARGATE", "FARGATE_SPOT"]
-
   default_capacity_provider_strategy {
     base              = 1
     weight            = 1
@@ -40,64 +34,29 @@ resource "aws_ecs_service" "ecs_frontend_service" {
   desired_count   = 2
   launch_type     = "FARGATE"
   deployment_configuration {
-    strategy             = "BLUE_GREEN" # 組み込み Blue/Green を使用
-    bake_time_in_minutes = 5            # 新バージョン(Green)へ切り替えた後、旧タスク(Blue)を削除するまでの待機時間（分）
+    strategy             = "BLUE_GREEN"
+    bake_time_in_minutes = 1            # 新バージョン(Green)へ切り替えた後、旧タスク(Blue)を削除するまでの待機時間（分）
   }
   load_balancer {
     container_name = "app"
     container_port = 8080
-
-    # 組み込み Blue/Green 用の設定
+    target_group_arn = var.tg_blue_arn
     advanced_configuration {
-      alternate_target_group_arn = var.tg_green_arn                 # 代替（サブ/Green側）のターゲットグループ
-      production_listener_rule   = var.production_listener_rule_arn # 本番トラフィックをルーティングしている ALB リスナールールの ARN（ALB では Rule ARN が必要）
+      alternate_target_group_arn = var.tg_green_arn
+      production_listener_rule   = var.production_listener_rule_arn
       # test_listener_rule          = "${var.test_listener_rule_arn}"            # テストトラフィック用（オプション）
-      role_arn = var.ecs_infrastructure_role_for_load_balancers_arn # ECS が ALB 設定を操作するための IAM ロール
+      role_arn = var.ecs_infrastructure_role_for_load_balancers_arn
     }
-    target_group_arn = var.tg_blue_arn # メイン（プライマリ/Blue側）のターゲットグループ
   }
-
   network_configuration {
     subnets         = [var.private_subnet_id, var.private_subnet_id-1c]
     security_groups = [var.fargate_frontend_sg_id]
   }
   lifecycle {
     ignore_changes = [
-      # デプロイごとに使用されるターゲットグループ（Blue/Green）が入れ替わるため無効化
       load_balancer,
-      # CI/CD パイプライン（GitHub Actions等）側でタスク定義を更新する場合に指定
       task_definition,
     ]
   }
-
   #depends_on = [aws_lb_target_group.tg_blue]
-}
-
-################################################
-# ECS タスク定義
-################################################
-resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
-  family                   = "${var.project}-${var.environment}-task"
-  network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
-  cpu                      = "512"
-  memory                   = "1024"
-  execution_role_arn       = var.ecs_task_execution_role_arn
-
-  container_definitions = jsonencode([
-    {
-      name      = "app"
-      image     = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-frontend:latest"
-
-      portMappings = [
-        {
-          containerPort = 8080
-          #hostPort      = 8080 #Fargateモードだとこれは動かないらしい。
-          protocol      = "tcp"
-        }
-      ]
-
-      command = ["python", "app.py"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
-    }
-  ])
 }

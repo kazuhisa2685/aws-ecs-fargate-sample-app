@@ -31,7 +31,7 @@ resource "aws_lb_target_group" "tg_blue" {
   vpc_id      = var.vpc_id
 
   health_check {
-    path                = "/healthcheck"
+    path                = "/"
     interval            = 60
     timeout             = 5
     healthy_threshold   = 3
@@ -55,7 +55,7 @@ resource "aws_lb_target_group" "tg_green" {
   vpc_id      = var.vpc_id
 
   health_check {
-    path                = "/healthcheck"
+    path                = "/"
     interval            = 60
     timeout             = 5
     healthy_threshold   = 3
@@ -114,7 +114,7 @@ resource "aws_lb_listener_rule" "prod" {
   }
   condition {
     path_pattern {
-      values = ["/*"]
+      values = ["/"]
     }
   }
 }
