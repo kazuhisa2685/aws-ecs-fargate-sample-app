@@ -7,3 +7,6 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+
+# ADR(一時的に)
+ADR
