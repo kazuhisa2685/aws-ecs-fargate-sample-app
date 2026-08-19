@@ -71,7 +71,7 @@ resource "aws_lb_target_group" "tg_green" {
 }
 
 # リスナー設定
-resource "aws_lb_listener" "https" {
+resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.main.arn
   port              = "8080"
   protocol          = "HTTP"
