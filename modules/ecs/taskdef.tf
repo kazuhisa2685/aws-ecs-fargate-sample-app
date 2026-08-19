@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
   container_definitions = jsonencode([
     {
       name      = "app"
-      image     = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-frontend:latest"
+      image     = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-frontend:v1.0"
 
       portMappings = [
         {

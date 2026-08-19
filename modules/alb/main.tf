@@ -114,7 +114,7 @@ resource "aws_lb_listener_rule" "prod" {
   }
   condition {
     path_pattern {
-      values = ["/"]
+      values = ["/*"]
     }
   }
 }
