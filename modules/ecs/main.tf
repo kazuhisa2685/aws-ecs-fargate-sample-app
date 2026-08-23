@@ -15,7 +15,7 @@ resource "aws_ecs_cluster" "ecs_frontend_cluster" {
 }
 # キャパシティプロバイダーの設定 (FARGATE / FARGATE_SPOT)
 resource "aws_ecs_cluster_capacity_providers" "ecs_cluster_capacity_providers" {
-  cluster_name = aws_ecs_cluster.ecs_frontend_cluster.name
+  cluster_name       = aws_ecs_cluster.ecs_frontend_cluster.name
   capacity_providers = ["FARGATE", "FARGATE_SPOT"]
   default_capacity_provider_strategy {
     base              = 1
@@ -39,7 +39,7 @@ resource "aws_ecs_service" "ecs_frontend_service" {
     type = "ECS"
   }
   deployment_configuration {
-    strategy = "BLUE_GREEN"
+    strategy             = "BLUE_GREEN"
     bake_time_in_minutes = 1
   }
   deployment_circuit_breaker {
@@ -48,18 +48,18 @@ resource "aws_ecs_service" "ecs_frontend_service" {
   }
   load_balancer {
     target_group_arn = var.tg_blue_arn
-    container_name = "app"
-    container_port = 8080
+    container_name   = "app"
+    container_port   = 8080
     advanced_configuration {
       alternate_target_group_arn = var.tg_green_arn
-      production_listener_rule = var.aws_lb_listener_rule_production_rule_arn
-      test_listener_rule       = var.aws_lb_listener_rule_test_rule_arn
-      role_arn = var.ecs_infrastructure_role_for_load_balancers_arn
+      production_listener_rule   = var.aws_lb_listener_rule_production_rule_arn
+      test_listener_rule         = var.aws_lb_listener_rule_test_rule_arn
+      role_arn                   = var.ecs_infrastructure_role_for_load_balancers_arn
     }
   }
   network_configuration {
-    subnets         = [var.private_subnet_id, var.private_subnet_id-1c]
-    security_groups = [var.fargate_frontend_sg_id]
+    subnets          = [var.private_subnet_id, var.private_subnet_id-1c]
+    security_groups  = [var.fargate_frontend_sg_id]
     assign_public_ip = false
   }
   lifecycle {

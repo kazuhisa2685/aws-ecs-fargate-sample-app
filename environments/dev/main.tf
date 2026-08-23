@@ -72,17 +72,17 @@ module "iam" {
 # }
 
 module "ecs" {
-  source                       = "../../modules/ecs"
-  project                      = local.project
-  environment                  = local.environment
-  private_subnet_id            = module.vpc.private_subnet_app_id
-  private_subnet_id-1c         = module.vpc.private_subnet_app_id-1c
-  fargate_frontend_sg_id       = module.vpc.fargate_frontend_sg_id
-  tg_green_arn                 = module.alb.tg_green_arn
-  tg_blue_arn                  = module.alb.tg_blue_arn
-  aws_lb_listener_rule_production_rule_arn = module.alb.aws_lb_listener_rule_production_rule.arn
-  aws_lb_listener_rule_test_rule_arn = module.alb.aws_lb_listener_rule_test_rule.arn
-  ecs_task_execution_role_arn    = module.iam.ecs_task_execution_role_arn
+  source                                         = "../../modules/ecs"
+  project                                        = local.project
+  environment                                    = local.environment
+  private_subnet_id                              = module.vpc.private_subnet_app_id
+  private_subnet_id-1c                           = module.vpc.private_subnet_app_id-1c
+  fargate_frontend_sg_id                         = module.vpc.fargate_frontend_sg_id
+  tg_green_arn                                   = module.alb.tg_green_arn
+  tg_blue_arn                                    = module.alb.tg_blue_arn
+  aws_lb_listener_rule_production_rule_arn       = module.alb.aws_lb_listener_rule_production_rule.arn
+  aws_lb_listener_rule_test_rule_arn             = module.alb.aws_lb_listener_rule_test_rule.arn
+  ecs_task_execution_role_arn                    = module.iam.ecs_task_execution_role_arn
   ecs_infrastructure_role_for_load_balancers_arn = module.iam.ecs_infrastructure_role_for_load_balancers_arn
 }
 

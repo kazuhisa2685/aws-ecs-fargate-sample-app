@@ -235,7 +235,7 @@ resource "aws_route_table_association" "private_app" {
   route_table_id = aws_route_table.private_route_table_app.id
 }
 resource "aws_vpc_endpoint_route_table_association" "private_app_s3" {
-  vpc_endpoint_id = aws_vpc_endpoint.s3.id                    # S3エンドポイントのID (vpce-...)
+  vpc_endpoint_id = aws_vpc_endpoint.s3.id                     # S3エンドポイントのID (vpce-...)
   route_table_id  = aws_route_table.private_route_table_app.id # 紐付けたいルートテーブルのID (rtb-...)
 }
 
@@ -312,8 +312,8 @@ resource "aws_route_table_association" "private_app-1c" {
   route_table_id = aws_route_table.private_route_table_app-1c.id
 }
 resource "aws_vpc_endpoint_route_table_association" "private_app_s3-1c" {
-  vpc_endpoint_id = aws_vpc_endpoint.s3.id                   
-  route_table_id = aws_route_table.private_route_table_app-1c.id
+  vpc_endpoint_id = aws_vpc_endpoint.s3.id
+  route_table_id  = aws_route_table.private_route_table_app-1c.id
 }
 # プライベートサブネット(db)用のルートテーブル
 resource "aws_route_table" "private_route_table_db-1c" {
@@ -525,9 +525,9 @@ resource "aws_security_group" "vpc_endpoint_sg" {
 
   # アプリケーションサブネット内のリソースからのリクエストのみ許可する
   ingress {
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
+    from_port = 443
+    to_port   = 443
+    protocol  = "tcp"
     security_groups = [
       aws_security_group.fargate_frontend_sg.id, #ここも追加。VPCエンドポイントを通してECRにアクセスするため、フロントエンドのFargateからのアクセスも許可する必要がある
       aws_security_group.fargate_backend_sg.id

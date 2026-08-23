@@ -11,14 +11,14 @@ resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
 
   container_definitions = jsonencode([
     {
-      name      = "app"
-      image     = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-frontend:latest"
+      name  = "app"
+      image = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-frontend:latest"
 
       portMappings = [
         {
           containerPort = 8080
           #hostPort      = 8080 #Fargateモードだとこれは動かないらしい。
-          protocol      = "tcp"
+          protocol = "tcp"
         }
       ]
 
