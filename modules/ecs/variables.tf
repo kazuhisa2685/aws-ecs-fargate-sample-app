@@ -23,15 +23,16 @@ variable "tg_green_arn" {
 variable "tg_blue_arn" {
   type = string
 }
-variable "alb_listener_arn" {
-  type = string
-}
-variable "production_listener_rule_arn" {
-  type = string
-}
+
 variable "ecs_task_execution_role_arn" {
   type = string
 }
 variable "ecs_infrastructure_role_for_load_balancers_arn" {
+  type = string
+}
+variable "aws_lb_listener_rule_production_rule_arn" {
+  type = string
+}
+variable "aws_lb_listener_rule_test_rule_arn" {
   type = string
 }

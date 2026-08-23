@@ -4,9 +4,16 @@ output "tg_blue_arn" {
 output "tg_green_arn" {
   value = aws_lb_target_group.tg_green.arn
 }
-output "alb_listener_arn" {
-  value = aws_lb_listener.http.arn
+output "aws_lb_listener_production_listener" {
+  value = aws_lb_listener.production_listener
 }
-output "alb_listener_rule_prod_arn" {
-  value = aws_lb_listener_rule.prod.arn
+output "aws_lb_listener_test_listener" {
+  value = aws_lb_listener.test_listener
+}
+
+output "aws_lb_listener_rule_production_rule" {
+  value = aws_lb_listener_rule.production_rule
+}
+output "aws_lb_listener_rule_test_rule" {
+  value = aws_lb_listener_rule.test_rule
 }

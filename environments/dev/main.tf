@@ -65,11 +65,11 @@ module "iam" {
   environment = local.environment
 }
 
-module "ecr" {
-  source      = "../../modules/ecr"
-  project     = local.project
-  environment = local.environment
-}
+# module "ecr" {
+#   source      = "../../modules/ecr"
+#   project     = local.project
+#   environment = local.environment
+# }
 
 module "ecs" {
   source                       = "../../modules/ecs"
@@ -80,11 +80,10 @@ module "ecs" {
   fargate_frontend_sg_id       = module.vpc.fargate_frontend_sg_id
   tg_green_arn                 = module.alb.tg_green_arn
   tg_blue_arn                  = module.alb.tg_blue_arn
-  alb_listener_arn             = module.alb.alb_listener_arn
-  production_listener_rule_arn = module.alb.alb_listener_rule_prod_arn
+  aws_lb_listener_rule_production_rule_arn = module.alb.aws_lb_listener_rule_production_rule.arn
+  aws_lb_listener_rule_test_rule_arn = module.alb.aws_lb_listener_rule_test_rule.arn
   ecs_task_execution_role_arn    = module.iam.ecs_task_execution_role_arn
   ecs_infrastructure_role_for_load_balancers_arn = module.iam.ecs_infrastructure_role_for_load_balancers_arn
-  #test_listener_rule_arn = module.alb.alb_listener_rule_test_arn
 }
 
 module "alb" {

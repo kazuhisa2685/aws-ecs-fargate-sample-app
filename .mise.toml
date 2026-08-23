@@ -1,4 +1,4 @@
 [tools]
-terraform = "1.13.3"
+terraform = "1.15.9"
 awscli = "latest"
 tflint = "latest"
