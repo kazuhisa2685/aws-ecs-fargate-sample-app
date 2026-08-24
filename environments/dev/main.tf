@@ -78,8 +78,8 @@ module "ecs" {
   private_subnet_id                              = module.vpc.private_subnet_app_id
   private_subnet_id-1c                           = module.vpc.private_subnet_app_id-1c
   fargate_frontend_sg_id                         = module.vpc.fargate_frontend_sg_id
-  tg_green_arn                                   = module.alb.tg_green_arn
-  tg_blue_arn                                    = module.alb.tg_blue_arn
+  aws_lb_target_group_target_1_arn               = module.alb.aws_lb_target_group_target_1.arn
+  aws_lb_target_group_target_2_arn               = module.alb.aws_lb_target_group_target_2.arn
   aws_lb_listener_rule_production_rule_arn       = module.alb.aws_lb_listener_rule_production_rule.arn
   aws_lb_listener_rule_test_rule_arn             = module.alb.aws_lb_listener_rule_test_rule.arn
   ecs_task_execution_role_arn                    = module.iam.ecs_task_execution_role_arn

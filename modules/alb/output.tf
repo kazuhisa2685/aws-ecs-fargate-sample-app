@@ -1,8 +1,8 @@
-output "tg_blue_arn" {
-  value = aws_lb_target_group.tg_blue.arn
+output "aws_lb_target_group_target_1" {
+  value = aws_lb_target_group.target-1
 }
-output "tg_green_arn" {
-  value = aws_lb_target_group.tg_green.arn
+output "aws_lb_target_group_target_2" {
+  value = aws_lb_target_group.target-2
 }
 output "aws_lb_listener_production_listener" {
   value = aws_lb_listener.production_listener

@@ -47,11 +47,11 @@ resource "aws_ecs_service" "ecs_frontend_service" {
     rollback = true
   }
   load_balancer {
-    target_group_arn = var.tg_blue_arn
+    target_group_arn = var.aws_lb_target_group_target_1_arn
     container_name   = "app"
     container_port   = 8080
     advanced_configuration {
-      alternate_target_group_arn = var.tg_green_arn
+      alternate_target_group_arn = var.aws_lb_target_group_target_2_arn
       production_listener_rule   = var.aws_lb_listener_rule_production_rule_arn
       test_listener_rule         = var.aws_lb_listener_rule_test_rule_arn
       role_arn                   = var.ecs_infrastructure_role_for_load_balancers_arn

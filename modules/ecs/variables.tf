@@ -17,10 +17,10 @@ variable "private_subnet_id-1c" {
 variable "fargate_frontend_sg_id" {
   type = string
 }
-variable "tg_green_arn" {
+variable "aws_lb_target_group_target_1_arn" {
   type = string
 }
-variable "tg_blue_arn" {
+variable "aws_lb_target_group_target_2_arn" {
   type = string
 }
 
