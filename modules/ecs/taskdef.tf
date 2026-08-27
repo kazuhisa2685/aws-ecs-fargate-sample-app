@@ -16,7 +16,7 @@ resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
 
       portMappings = [
         {
-          containerPort = 8080
+          containerPort = 80
           #hostPort      = 8080 #Fargateモードだとこれは動かないらしい。
           protocol = "tcp"
         }
