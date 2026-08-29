@@ -9,15 +9,14 @@ variable "environment" {
   type = string
 }
 
-variable "subnet_id" {
+variable "private_subnet_app_db_id" {
   type = string
 }
 
-variable "iam_instance_profile" {
+variable "private_subnet_app_db_id-1c" {
   type = string
 }
-
-variable "mgmt_sg_id" {
+variable "aws_security_group_aurora_sg_id" {
   type = string
 }
 
