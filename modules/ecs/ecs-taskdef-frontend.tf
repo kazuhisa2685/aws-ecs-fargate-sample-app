@@ -2,7 +2,7 @@
 # ECS タスク定義
 ################################################
 resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
-  family                   = "${var.project}-${var.environment}-task"
+  family                   = "${var.project}-${var.environment}-frontend-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"

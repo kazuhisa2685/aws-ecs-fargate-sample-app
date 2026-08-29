@@ -1,35 +1,9 @@
-###############################################
-# ECS クラスター (ECS更新時、ヘルスチェック猶予期間を設定することを忘れずに)
-###############################################
-resource "aws_ecs_cluster" "ecs_frontend_cluster" {
-  name = "${var.project}-${var.environment}-cluster"
-  setting {
-    name  = "containerInsights"
-    value = "enhanced"
-  }
-  tags = {
-    Name        = "${var.project}-${var.environment}-cluster"
-    Environment = var.environment
-    Project     = var.project
-  }
-}
-# キャパシティプロバイダーの設定 (FARGATE / FARGATE_SPOT)
-resource "aws_ecs_cluster_capacity_providers" "ecs_cluster_capacity_providers" {
-  cluster_name       = aws_ecs_cluster.ecs_frontend_cluster.name
-  capacity_providers = ["FARGATE", "FARGATE_SPOT"]
-  default_capacity_provider_strategy {
-    base              = 1
-    weight            = 1
-    capacity_provider = "FARGATE"
-  }
-}
-
 # ################################################
 # # ECS サービス用
 # ################################################
 resource "aws_ecs_service" "ecs_frontend_service" {
-  name            = "${var.project}-${var.environment}-service"
-  cluster         = aws_ecs_cluster.ecs_frontend_cluster.id
+  name            = "${var.project}-${var.environment}-frontend-service"
+  cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.ecs_frontend_taskdef.arn
   desired_count   = 2
   launch_type     = "FARGATE"

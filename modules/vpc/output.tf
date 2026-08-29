@@ -28,6 +28,9 @@ output "alb_sg_id" {
 output "fargate_frontend_sg_id" {
   value = aws_security_group.fargate_frontend_sg.id
 }
+output "fargate_backend_sg_id" {
+  value = aws_security_group.fargate_backend_sg.id
+}
 output "private_subnet_app_id" {
   value = aws_subnet.private_subnet_app.id
 }
