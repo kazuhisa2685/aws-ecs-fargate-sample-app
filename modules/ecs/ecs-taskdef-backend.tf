@@ -11,18 +11,18 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
 
   container_definitions = jsonencode([
     {
-      name  = "app"
+      name  = "main"
       image = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-backend:latest"
 
       portMappings = [
         {
-          containerPort = 80
+          containerPort = 8000
           #hostPort      = 8080 #Fargateモードだとこれは動かないらしい。
           protocol = "tcp"
         }
       ]
 
-      command = ["python", "app.py"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
+      command = ["python", "main.py"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
     }
   ])
 }

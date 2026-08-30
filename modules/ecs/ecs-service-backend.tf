@@ -22,8 +22,8 @@ resource "aws_ecs_service" "ecs_backend_service" {
   }
   load_balancer {
     target_group_arn = var.aws_lb_target_group_target_1_arn
-    container_name   = "app"
-    container_port   = 80
+    container_name   = "main"
+    container_port   = 8000
     advanced_configuration {
       alternate_target_group_arn = var.aws_lb_target_group_target_2_arn
       production_listener_rule   = var.aws_lb_listener_rule_production_rule_arn

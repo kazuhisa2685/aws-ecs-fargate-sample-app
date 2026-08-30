@@ -67,7 +67,6 @@ Amazon Aurora Serverless v2
 | Amazon Aurora Serverless v2 | リレーショナルデータベース          |
 | Amazon VPC                  | ネットワーク基盤               |
 | Internet Gateway            | インターネット接続              |
-| NAT Gateway                 | Private Subnetからの外部通信  |
 | VPC Endpoint                | AWSサービスへのPrivate接続     |
 | AWS Secrets Manager         | DB認証情報等の機密情報管理         |
 | Amazon CloudWatch           | ログ・メトリクス監視             |
