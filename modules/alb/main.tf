@@ -22,9 +22,9 @@ resource "aws_lb" "main" {
   }
 }
 
-# ターゲットグループ(青)
-resource "aws_lb_target_group" "target-1" {
-  name        = "${var.project}-${var.environment}-target-1"
+# ターゲットグループ　フロントエンド１
+resource "aws_lb_target_group" "frontend_target_1" {
+  name        = "${var.project}-${var.environment}-frontend-target-1"
   port        = 80
   protocol    = "HTTP"
   target_type = "ip" #Fargateでは、タスクごとにENIが作成され、タスク自身がVPC内のプライベートIPアドレスを持つため
@@ -40,15 +40,15 @@ resource "aws_lb_target_group" "target-1" {
   }
 
   tags = {
-    Name        = "${var.project}-${var.environment}-target-1"
+    Name        = "${var.project}-${var.environment}-frontend-target-1"
     Environment = var.environment
     Project     = var.project
   }
 }
 
-# ターゲットグループ(緑)
-resource "aws_lb_target_group" "target-2" {
-  name        = "${var.project}-${var.environment}-target-2"
+# ターゲットグループ　フロントエンド２
+resource "aws_lb_target_group" "frontend_target_2" {
+  name        = "${var.project}-${var.environment}-frontend-target-2"
   port        = 8080
   protocol    = "HTTP"
   target_type = "ip" #Fargateでは、タスクごとにENIが作成され、タスク自身がVPC内のプライベートIPアドレスを持つため
@@ -64,14 +64,14 @@ resource "aws_lb_target_group" "target-2" {
   }
 
   tags = {
-    Name        = "${var.project}-${var.environment}-target-2"
+    Name        = "${var.project}-${var.environment}-frontend-target-2"
     Environment = var.environment
     Project     = var.project
   }
 }
 
-# 本番リスナー
-resource "aws_lb_listener" "production_listener" {
+# 本番リスナー　フロントエンド
+resource "aws_lb_listener" "frontend_production_listener" {
   load_balancer_arn = aws_lb.main.arn
   port              = "80"
   protocol          = "HTTP"
@@ -81,35 +81,39 @@ resource "aws_lb_listener" "production_listener" {
 
     forward {
       target_group {
-        arn    = aws_lb_target_group.target-1.arn
+        arn    = aws_lb_target_group.frontend_target_1.arn
         weight = 100
       }
 
       target_group {
-        arn    = aws_lb_target_group.target-2.arn
+        arn    = aws_lb_target_group.frontend_target_2.arn
         weight = 0
       }
     }
   }
 }
 
-#本番リスナールール
-resource "aws_lb_listener_rule" "production_rule" {
-  listener_arn = aws_lb_listener.production_listener.arn
+#本番リスナールール　フロントエンド
+resource "aws_lb_listener_rule" "frontend_production_listener_rule" {
+  listener_arn = aws_lb_listener.frontend_production_listener.arn
   priority     = 100
 
   action {
     type = "forward"
     forward {
       target_group {
-        arn    = aws_lb_target_group.target-1.arn
+        arn    = aws_lb_target_group.frontend_target_1.arn
         weight = 100
       }
       target_group {
-        arn    = aws_lb_target_group.target-2.arn
+        arn    = aws_lb_target_group.frontend_target_2.arn
         weight = 0
       }
     }
+  }
+
+  lifecycle {
+    ignore_changes = [action]
   }
 
   condition {
@@ -119,26 +123,30 @@ resource "aws_lb_listener_rule" "production_rule" {
   }
 }
 
-#テストリスナー
-resource "aws_lb_listener" "test_listener" {
+# テストリスナー　フロントエンド
+resource "aws_lb_listener" "frontend_test_listener" {
   load_balancer_arn = aws_lb.main.arn
   port              = "8080"
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.target-2.arn
+    target_group_arn = aws_lb_target_group.frontend_target_2.arn
   }
 }
 
-# テスト用リスナールール（★これもECSのadvanced_configurationに渡すやつ）
-resource "aws_lb_listener_rule" "test_rule" {
-  listener_arn = aws_lb_listener.test_listener.arn
+# テスト用リスナールール　フロントエンド
+resource "aws_lb_listener_rule" "frontend_test_listener_rule" {
+  listener_arn = aws_lb_listener.frontend_test_listener.arn
   priority     = 100
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.target-2.arn
+    target_group_arn = aws_lb_target_group.frontend_target_2.arn
+  }
+
+  lifecycle {
+    ignore_changes = [action]
   }
 
   condition {
@@ -147,3 +155,138 @@ resource "aws_lb_listener_rule" "test_rule" {
     }
   }
 }
+
+
+# ターゲットグループ　バックエンド１
+resource "aws_lb_target_group" "backend_target_1" {
+  name        = "${var.project}-${var.environment}-backend-target-1"
+  port        = 8051
+  protocol    = "HTTP"
+  target_type = "ip" #Fargateでは、タスクごとにENIが作成され、タスク自身がVPC内のプライベートIPアドレスを持つため
+  vpc_id      = var.vpc_id
+
+  health_check {
+    path                = "/"
+    interval            = 60
+    timeout             = 5
+    healthy_threshold   = 3
+    unhealthy_threshold = 2
+    matcher             = "200"
+  }
+
+  tags = {
+    Name        = "${var.project}-${var.environment}-backend-target-1"
+    Environment = var.environment
+    Project     = var.project
+  }
+}
+
+# ターゲットグループ　バックエンド２
+resource "aws_lb_target_group" "backend_target_2" {
+  name        = "${var.project}-${var.environment}-backend-target-2"
+  port        = 8052
+  protocol    = "HTTP"
+  target_type = "ip" #Fargateでは、タスクごとにENIが作成され、タスク自身がVPC内のプライベートIPアドレスを持つため
+  vpc_id      = var.vpc_id
+
+  health_check {
+    path                = "/"
+    interval            = 60
+    timeout             = 5
+    healthy_threshold   = 3
+    unhealthy_threshold = 2
+    matcher             = "200"
+  }
+
+  tags = {
+    Name        = "${var.project}-${var.environment}-backend-target-2"
+    Environment = var.environment
+    Project     = var.project
+  }
+}
+
+# 本番リスナー　バックエンド
+resource "aws_lb_listener" "backend_production_listener" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = "8051"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "forward"
+
+    forward {
+      target_group {
+        arn    = aws_lb_target_group.backend_target_1.arn
+        weight = 100
+      }
+
+      target_group {
+        arn    = aws_lb_target_group.backend_target_2.arn
+        weight = 0
+      }
+    }
+  }
+}
+
+#本番リスナールール　バックエンド
+resource "aws_lb_listener_rule" "backend_production_listener_rule" {
+  listener_arn = aws_lb_listener.backend_production_listener.arn
+  priority     = 100
+
+  action {
+    type = "forward"
+    forward {
+      target_group {
+        arn    = aws_lb_target_group.backend_target_1.arn
+        weight = 100
+      }
+      target_group {
+        arn    = aws_lb_target_group.backend_target_2.arn
+        weight = 0
+      }
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [action]
+  }
+
+  condition {
+    path_pattern {
+      values = ["*"] # 全すべてのパスを対象にする
+    }
+  }
+}
+
+# テストリスナー　バックエンド
+resource "aws_lb_listener" "backend_test_listener" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = "8052"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend_target_2.arn
+  }
+}
+
+# テスト用リスナールール　バックエンド
+resource "aws_lb_listener_rule" "backend_test_listener_rule" {
+  listener_arn = aws_lb_listener.backend_test_listener.arn
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend_target_2.arn
+  }
+
+  lifecycle {
+    ignore_changes = [action]
+  }
+  condition {
+    path_pattern {
+      values = ["api/*"]
+    }
+  }
+}
+

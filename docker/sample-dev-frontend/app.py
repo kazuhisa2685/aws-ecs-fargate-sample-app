@@ -6,7 +6,7 @@ import streamlit as st
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 st.set_page_config(page_title="Sample Dev App", page_icon="📝", layout="centered")
-st.title("📝 Sample Memo App")
+st.title("Sample Memo App")
 st.caption(f"backend: {BACKEND_URL}")
 
 # --- 新規メモ作成 ---

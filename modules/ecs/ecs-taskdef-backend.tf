@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
         }
       ]
 
-      command = ["python", "main.py"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
+      command = ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
     }
   ])
 }

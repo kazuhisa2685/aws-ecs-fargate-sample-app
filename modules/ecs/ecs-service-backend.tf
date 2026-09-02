@@ -21,13 +21,13 @@ resource "aws_ecs_service" "ecs_backend_service" {
     rollback = true
   }
   load_balancer {
-    target_group_arn = var.aws_lb_target_group_target_1_arn
+    target_group_arn = var.backend_target_group_1_arn
     container_name   = "main"
     container_port   = 8000
     advanced_configuration {
-      alternate_target_group_arn = var.aws_lb_target_group_target_2_arn
-      production_listener_rule   = var.aws_lb_listener_rule_production_rule_arn
-      test_listener_rule         = var.aws_lb_listener_rule_test_rule_arn
+      alternate_target_group_arn = var.backend_target_group_2_arn
+      production_listener_rule   = var.backend_production_listener_rule_arn
+      test_listener_rule         = var.backend_test_listener_rule_arn
       role_arn                   = var.ecs_infrastructure_role_for_load_balancers_arn
     }
   }
@@ -37,10 +37,7 @@ resource "aws_ecs_service" "ecs_backend_service" {
     assign_public_ip = false
   }
   lifecycle {
-    ignore_changes = [
-      load_balancer,
-      task_definition,
-    ]
+    ignore_changes = [task_definition]
   }
   #depends_on = [aws_lb_target_group.tg_blue]
 }

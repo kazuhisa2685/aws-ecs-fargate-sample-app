@@ -20,12 +20,6 @@ variable "fargate_frontend_sg_id" {
 variable "fargate_backend_sg_id" {
   type = string
 }
-variable "aws_lb_target_group_target_1_arn" {
-  type = string
-}
-variable "aws_lb_target_group_target_2_arn" {
-  type = string
-}
 
 variable "ecs_task_execution_role_arn" {
   type = string
@@ -33,9 +27,51 @@ variable "ecs_task_execution_role_arn" {
 variable "ecs_infrastructure_role_for_load_balancers_arn" {
   type = string
 }
-variable "aws_lb_listener_rule_production_rule_arn" {
-  type = string
+
+# ============================
+# Frontend
+# ============================
+
+variable "frontend_target_group_1_arn" {
+  type        = string
+  description = "Frontend Blue target group ARN"
 }
-variable "aws_lb_listener_rule_test_rule_arn" {
-  type = string
+
+variable "frontend_target_group_2_arn" {
+  type        = string
+  description = "Frontend Green target group ARN"
+}
+
+variable "frontend_production_listener_rule_arn" {
+  type        = string
+  description = "Frontend production listener rule ARN"
+}
+
+variable "frontend_test_listener_rule_arn" {
+  type        = string
+  description = "Frontend test listener rule ARN"
+}
+
+# ============================
+# Backend
+# ============================
+
+variable "backend_target_group_1_arn" {
+  type        = string
+  description = "Backend Blue target group ARN"
+}
+
+variable "backend_target_group_2_arn" {
+  type        = string
+  description = "Backend Green target group ARN"
+}
+
+variable "backend_production_listener_rule_arn" {
+  type        = string
+  description = "Backend production listener rule ARN"
+}
+
+variable "backend_test_listener_rule_arn" {
+  type        = string
+  description = "Backend test listener rule ARN"
 }

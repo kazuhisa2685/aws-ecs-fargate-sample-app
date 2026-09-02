@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
         }
       ]
 
-      command = ["python", "app.py"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
+      #command = ["streamlit", "run", "app.py", "--server.port=80", "--server.address=0.0.0.0"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
     }
   ])
 }
