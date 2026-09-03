@@ -38,7 +38,7 @@ services:
     environment:
       BACKEND_URL: http://backend:8000
     ports:
-      - "80:80"
+      - "1500:1500"
     depends_on:
       - backend
 

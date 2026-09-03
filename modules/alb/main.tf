@@ -25,13 +25,13 @@ resource "aws_lb" "main" {
 # ターゲットグループ　フロントエンド１
 resource "aws_lb_target_group" "frontend_target_1" {
   name        = "${var.project}-${var.environment}-frontend-target-1"
-  port        = 80
+  port        = 1500
   protocol    = "HTTP"
   target_type = "ip" #Fargateでは、タスクごとにENIが作成され、タスク自身がVPC内のプライベートIPアドレスを持つため
   vpc_id      = var.vpc_id
 
   health_check {
-    path                = "/"
+    path                = "/_stcore/health"
     interval            = 60
     timeout             = 5
     healthy_threshold   = 3
@@ -49,13 +49,13 @@ resource "aws_lb_target_group" "frontend_target_1" {
 # ターゲットグループ　フロントエンド２
 resource "aws_lb_target_group" "frontend_target_2" {
   name        = "${var.project}-${var.environment}-frontend-target-2"
-  port        = 8080
+  port        =  1501
   protocol    = "HTTP"
   target_type = "ip" #Fargateでは、タスクごとにENIが作成され、タスク自身がVPC内のプライベートIPアドレスを持つため
   vpc_id      = var.vpc_id
 
   health_check {
-    path                = "/"
+    path                = "/_stcore/health"
     interval            = 60
     timeout             = 5
     healthy_threshold   = 3
@@ -73,7 +73,7 @@ resource "aws_lb_target_group" "frontend_target_2" {
 # 本番リスナー　フロントエンド
 resource "aws_lb_listener" "frontend_production_listener" {
   load_balancer_arn = aws_lb.main.arn
-  port              = "80"
+  port              = "1500"
   protocol          = "HTTP"
 
   default_action {
@@ -126,7 +126,7 @@ resource "aws_lb_listener_rule" "frontend_production_listener_rule" {
 # テストリスナー　フロントエンド
 resource "aws_lb_listener" "frontend_test_listener" {
   load_balancer_arn = aws_lb.main.arn
-  port              = "8080"
+  port              = "1501"
   protocol          = "HTTP"
 
   default_action {
@@ -160,7 +160,7 @@ resource "aws_lb_listener_rule" "frontend_test_listener_rule" {
 # ターゲットグループ　バックエンド１
 resource "aws_lb_target_group" "backend_target_1" {
   name        = "${var.project}-${var.environment}-backend-target-1"
-  port        = 8051
+  port        = 8000
   protocol    = "HTTP"
   target_type = "ip" #Fargateでは、タスクごとにENIが作成され、タスク自身がVPC内のプライベートIPアドレスを持つため
   vpc_id      = var.vpc_id
@@ -184,7 +184,7 @@ resource "aws_lb_target_group" "backend_target_1" {
 # ターゲットグループ　バックエンド２
 resource "aws_lb_target_group" "backend_target_2" {
   name        = "${var.project}-${var.environment}-backend-target-2"
-  port        = 8052
+  port        = 8001
   protocol    = "HTTP"
   target_type = "ip" #Fargateでは、タスクごとにENIが作成され、タスク自身がVPC内のプライベートIPアドレスを持つため
   vpc_id      = var.vpc_id
@@ -208,7 +208,7 @@ resource "aws_lb_target_group" "backend_target_2" {
 # 本番リスナー　バックエンド
 resource "aws_lb_listener" "backend_production_listener" {
   load_balancer_arn = aws_lb.main.arn
-  port              = "8051"
+  port              = "8000"
   protocol          = "HTTP"
 
   default_action {
@@ -261,7 +261,7 @@ resource "aws_lb_listener_rule" "backend_production_listener_rule" {
 # テストリスナー　バックエンド
 resource "aws_lb_listener" "backend_test_listener" {
   load_balancer_arn = aws_lb.main.arn
-  port              = "8052"
+  port              = "8001"
   protocol          = "HTTP"
 
   default_action {

@@ -23,7 +23,7 @@ resource "aws_ecs_service" "ecs_frontend_service" {
   load_balancer {
     target_group_arn = var.frontend_target_group_1_arn
     container_name   = "app"
-    container_port   = 80
+    container_port   = 1500
     advanced_configuration {
       alternate_target_group_arn = var.frontend_target_group_2_arn
       production_listener_rule   = var.frontend_production_listener_rule_arn

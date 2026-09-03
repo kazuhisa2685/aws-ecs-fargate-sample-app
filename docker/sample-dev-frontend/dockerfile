@@ -10,9 +10,9 @@ COPY app.py .
 RUN useradd -m appuser
 USER appuser
 
-EXPOSE 80
+EXPOSE 1500
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:80/_stcore/health')" || exit 1
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:1500/_stcore/health')" || exit 1
 
-CMD ["streamlit", "run", "app.py", "--server.port=80", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "app.py", "--server.port=1500", "--server.address=0.0.0.0"]

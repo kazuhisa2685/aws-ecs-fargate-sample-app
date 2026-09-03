@@ -16,13 +16,13 @@ resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
 
       portMappings = [
         {
-          containerPort = 80
-          #hostPort      = 8080 #Fargateモードだとこれは動かないらしい。
+          containerPort = 1500
+          #hostPort      = 1500 #Fargateモードだとこれは動かないらしい。
           protocol = "tcp"
         }
       ]
 
-      #command = ["streamlit", "run", "app.py", "--server.port=80", "--server.address=0.0.0.0"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
+      command = ["streamlit", "run", "app.py", "--server.port=1500", "--server.address=0.0.0.0"]
     }
   ])
 }
