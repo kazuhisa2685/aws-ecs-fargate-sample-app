@@ -13,7 +13,15 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
     {
       name  = "main"
       image = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-backend:latest"
-
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          # 上で作成したロググループの名前を参照
+          "awslogs-group"         = aws_cloudwatch_log_group.ecs_backend_log_group.name
+          "awslogs-region"        = "ap-northeast-1"
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
       portMappings = [
         {
           containerPort = 8000
@@ -25,4 +33,14 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
       command = ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
     }
   ])
+}
+
+resource "aws_cloudwatch_log_group" "ecs_backend_log_group" {
+  # タスク定義の logConfiguration で指定する awslogs-group の名前と一致させます
+  name              = "/ecs/sample-dev-backend-task"
+  retention_in_days = 30
+  tags = {
+    Environment = "dev"
+    Application = "sample-backend"
+  }
 }

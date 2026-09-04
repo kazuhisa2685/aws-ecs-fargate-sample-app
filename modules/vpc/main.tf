@@ -610,3 +610,24 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
     Env     = var.environment
   }
 }
+
+# VPCエンドポイント（ECS LOG用）
+resource "aws_vpc_endpoint" "ecs_logs" {
+  vpc_id            = aws_vpc.vpc.id
+  service_name      = "com.amazonaws.ap-northeast-1.logs"
+  vpc_endpoint_type = "Interface"
+  security_group_ids = [
+    aws_security_group.vpc_endpoint_sg.id
+  ]
+  subnet_ids = [
+    aws_subnet.private_subnet_egress.id
+  ]
+
+  private_dns_enabled = true
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-vpc-endpoint-ecr-dkr"
+    Project = var.project
+    Env     = var.environment
+  }
+}

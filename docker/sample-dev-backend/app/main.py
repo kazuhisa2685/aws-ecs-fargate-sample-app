@@ -51,7 +51,7 @@ def health_check(db: Session = Depends(get_db)):
 def list_memos(db: Session = Depends(get_db)):
     return db.query(models.Memo).order_by(models.Memo.id.desc()).all()
 
-
+#curl -X POST http://localhost:8000/memos -H "Content-Type: application/json" -d "{\"title\": \"cmdテスト\", \"content\": \"本文\"}"
 @app.post("/memos", response_model=schemas.MemoOut, status_code=201)
 def create_memo(memo: schemas.MemoCreate, db: Session = Depends(get_db)):
     db_memo = models.Memo(title=memo.title, content=memo.content)
