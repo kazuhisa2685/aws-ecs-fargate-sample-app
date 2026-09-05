@@ -65,11 +65,11 @@ module "iam" {
   environment = local.environment
 }
 
-# module "ecr" {
-#   source      = "../../modules/ecr"
-#   project     = local.project
-#   environment = local.environment
-# }
+module "ecr" {
+  source      = "../../modules/ecr"
+  project     = local.project
+  environment = local.environment
+}
 
 module "ecs" {
   source                                         = "../../modules/ecs"
