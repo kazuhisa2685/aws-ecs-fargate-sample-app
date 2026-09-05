@@ -51,11 +51,7 @@ variable "frontend_test_listener_rule_arn" {
   type        = string
   description = "Frontend test listener rule ARN"
 }
-variable "frontend_image_tag" {
-  type        = string
-  description = "Frontend Docker Image Tag"
-  default     = "latest"
-}
+
 # ============================
 # Backend
 # ============================
@@ -79,8 +75,16 @@ variable "backend_test_listener_rule_arn" {
   type        = string
   description = "Backend test listener rule ARN"
 }
+###############################################
+# image tags
+################################################
+variable "frontend_image_tag" {
+  type        = string
+  description = "Frontend Docker Image Tag"
+  # default     = "latest"
+}
 variable "backend_image_tag" {
   type        = string
   description = "Backend Docker Image Tag"
-  default     = "latest"
+  # default     = "latest"
 }
