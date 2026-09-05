@@ -59,6 +59,4 @@ jobs:
             -var="backend_image_tag=${{ env.SHORT_SHA }}" \
             -var="frontend_image_tag=${{ env.SHORT_SHA }}" \
             -target=module.ecs.aws_ecs_task_definition.ecs_backend_taskdef \
-            -target=module.ecs.aws_ecs_service.ecs_backend_service \
-            -target=module.ecs.aws_ecs_task_definition.ecs_frontend_taskdef \
-            -target=module.ecs.aws_ecs_service.ecs_frontend_service
+            -target=module.ecs.aws_ecs_task_definition.ecs_frontend_taskdef
