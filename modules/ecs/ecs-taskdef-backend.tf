@@ -24,9 +24,11 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
       }
       portMappings = [
         {
+          name        = "backend-port" # ← service_connect_configuration.service.port_name と一致させる必要がある
           containerPort = 8000
           #hostPort      = 8080 #Fargateモードだとこれは動かないらしい。
           protocol = "tcp"
+          appProtocol = "http"
         }
       ]
 

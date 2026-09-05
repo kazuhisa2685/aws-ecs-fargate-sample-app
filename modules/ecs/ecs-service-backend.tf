@@ -37,6 +37,23 @@ resource "aws_ecs_service" "ecs_backend_service" {
     security_groups  = [var.fargate_backend_sg_id]
     assign_public_ip = false
   }
+
+  depends_on = [
+    aws_ecs_task_definition.ecs_backend_taskdef
+  ]
+  service_connect_configuration {
+    enabled   = true
+    namespace = aws_service_discovery_http_namespace.main.arn
+
+    service {
+      discovery_name    = "backend-service" # ← ほかのコンテナから見上げる時のホスト名になる
+      port_name         = "backend-port"     # ← タスク定義の portMappings.name と一致させる必要がある
+      client_alias {
+        port = 8000
+        dns_name = "backend-service"
+      }
+    }
+  }
   lifecycle {
     ignore_changes = [task_definition]
   }

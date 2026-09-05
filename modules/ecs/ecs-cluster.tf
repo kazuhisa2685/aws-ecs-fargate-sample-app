@@ -3,6 +3,9 @@
 ###############################################
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = "${var.project}-${var.environment}-cluster"
+  service_connect_defaults {
+    namespace = aws_service_discovery_http_namespace.main.arn
+  }
   setting {
     name  = "containerInsights"
     value = "enhanced"
@@ -22,4 +25,10 @@ resource "aws_ecs_cluster_capacity_providers" "ecs_cluster_capacity_providers" {
     weight            = 1
     capacity_provider = "FARGATE"
   }
+}
+
+#サービスコネクト
+resource "aws_service_discovery_http_namespace" "main" {
+  name = "${var.project}-${var.environment}-namespace"
+  description = "Service Discovery Namespace for ${var.project}-${var.environment}"
 }

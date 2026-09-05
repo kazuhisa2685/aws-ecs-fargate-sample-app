@@ -8,7 +8,10 @@ resource "aws_ecs_service" "ecs_frontend_service" {
   desired_count   = 2
   launch_type     = "FARGATE"
   #enable_execute_command = true 
-
+  service_connect_configuration {
+    enabled   = true
+    namespace = aws_service_discovery_http_namespace.main.arn
+  }
   # ECS標準型BlueGreen
   deployment_controller {
     type = "ECS"
