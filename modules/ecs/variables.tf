@@ -54,7 +54,7 @@ variable "frontend_test_listener_rule_arn" {
 variable "frontend_image_tag" {
   type        = string
   description = "Frontend Docker Image Tag"
-  #default     = "latest"
+  default     = "latest"
 }
 # ============================
 # Backend
@@ -82,5 +82,5 @@ variable "backend_test_listener_rule_arn" {
 variable "backend_image_tag" {
   type        = string
   description = "Backend Docker Image Tag"
-  #default     = "latest"
+  default     = "latest"
 }
