@@ -2,8 +2,8 @@ name: Push Docker Image to ECR & Deploy to ECS
 
 on:
   push:
-    branches:
-      - develop
+    paths:
+      - '**/deploy_mode'
 
 jobs:
   push-and-deploy:
@@ -52,13 +52,13 @@ jobs:
 
       # ピンポイントで ECS のみを更新
       - name: Terraform Apply (ECS Only)
-        working-directory: environments/dev # ★
+        working-directory: environments/dev
         run: |
           terraform init
           terraform apply -auto-approve \
             -var="backend_image_tag=${{ env.SHORT_SHA }}" \
             -var="frontend_image_tag=${{ env.SHORT_SHA }}" \
-            -target=aws_ecs_task_definition.backend \
-            -target=aws_ecs_service.backend \
-            -target=aws_ecs_task_definition.frontend \
-            -target=aws_ecs_service.frontend
+            -target=module.ecs.aws_ecs_task_definition.ecs_backend_taskdef \
+            -target=module.ecs.aws_ecs_service.ecs_backend_service \
+            -target=module.ecs.aws_ecs_task_definition.ecs_frontend_taskdef \
+            -target=module.ecs.aws_ecs_service.ecs_frontend_service
