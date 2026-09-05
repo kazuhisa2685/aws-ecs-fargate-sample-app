@@ -7,6 +7,7 @@ resource "aws_ecs_service" "ecs_backend_service" {
   task_definition = aws_ecs_task_definition.ecs_backend_taskdef.arn
   desired_count   = 2
   launch_type     = "FARGATE"
+  #enable_execute_command = true 
 
   # ECS標準型BlueGreen
   deployment_controller {
