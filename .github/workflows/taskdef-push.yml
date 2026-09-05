@@ -46,50 +46,18 @@ jobs:
           docker build -f docker/sample-dev-frontend/dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/sample-dev-frontend
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # ----------------------------------------------------
-      # バックエンドのデプロイ (AWS CLI)
-      # ----------------------------------------------------
-      - name: Deploy Backend to ECS
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          TASK_DEF_NAME: sample-dev-backend
-          CLUSTER_NAME: sample-dev-cluster
-          SERVICE_NAME: sample-dev-backend-service
-          CONTAINER_NAME: main
+      # Terraform セットアップ
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # ピンポイントで ECS のみを更新
+      - name: Terraform Apply (ECS Only)
         run: |
-          # 1. 稼働中の最新タスク定義を取得
-          aws ecs describe-task-definition --task-definition $TASK_DEF_NAME --query taskDefinition > task-def.json
-
-          # 2. イメージを新しいコミットハッシュタグに置き換えて無駄なフィールドを削除
-          jq --arg IMAGE "$ECR_REGISTRY/sample-dev-backend:${{ env.SHORT_SHA }}" \
-             --arg CONTAINER "$CONTAINER_NAME" \
-             '(.containerDefinitions[] | select(.name == $CONTAINER).image) = $IMAGE | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' \
-             task-def.json > new-task-def.json
-
-          # 3. 新しいタスク定義のリビジョンを登録
-          NEW_TASK_ARN=$(aws ecs register-task-definition --cli-input-json file://new-task-def.json --query 'taskDefinition.taskDefinitionArn' --output text)
-
-          # 4. ECSサービスを更新してデプロイ
-          aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_ARN
-
-      # ----------------------------------------------------
-      # フロントエンドのデプロイ (AWS CLI)
-      # ----------------------------------------------------
-      - name: Deploy Frontend to ECS
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          TASK_DEF_NAME: sample-dev-frontend
-          CLUSTER_NAME: sample-dev-cluster
-          SERVICE_NAME: sample-dev-frontend-service
-          CONTAINER_NAME: app
-        run: |
-          aws ecs describe-task-definition --task-definition $TASK_DEF_NAME --query taskDefinition > task-def-fe.json
-
-          jq --arg IMAGE "$ECR_REGISTRY/sample-dev-frontend:${{ env.SHORT_SHA }}" \
-             --arg CONTAINER "$CONTAINER_NAME" \
-             '(.containerDefinitions[] | select(.name == $CONTAINER).image) = $IMAGE | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' \
-             task-def-fe.json > new-task-def-fe.json
-
-          NEW_TASK_ARN=$(aws ecs register-task-definition --cli-input-json file://new-task-def-fe.json --query 'taskDefinition.taskDefinitionArn' --output text)
-
-          aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_ARN
+          terraform init
+          terraform apply -auto-approve \
+            -var="backend_image_tag=${{ env.SHORT_SHA }}" \
+            -var="frontend_image_tag=${{ env.SHORT_SHA }}" \
+            -target=aws_ecs_task_definition.backend \
+            -target=aws_ecs_service.backend \
+            -target=aws_ecs_task_definition.frontend \
+            -target=aws_ecs_service.frontend

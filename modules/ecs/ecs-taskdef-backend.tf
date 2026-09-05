@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
   container_definitions = jsonencode([
     {
       name  = "main"
-      image = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-backend:latest"
+      image = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-backend:${var.backend_image_tag}"
       logConfiguration = {
         logDriver = "awslogs"
         options = {
