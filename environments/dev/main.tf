@@ -89,6 +89,8 @@ module "ecs" {
   backend_test_listener_rule_arn                 = module.alb.aws_lb_listener_rule_backend_test_listener_rule.arn
   ecs_task_execution_role_arn                    = module.iam.ecs_task_execution_role_arn
   ecs_infrastructure_role_for_load_balancers_arn = module.iam.ecs_infrastructure_role_for_load_balancers_arn
+  frontend_image_tag                              = var.frontend_image_tag
+  backend_image_tag                               = var.backend_image_tag
 }
 
 module "alb" {
