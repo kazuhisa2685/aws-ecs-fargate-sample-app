@@ -52,6 +52,7 @@ jobs:
 
       # ピンポイントで ECS のみを更新
       - name: Terraform Apply (ECS Only)
+        working-directory: environments/dev # ★
         run: |
           terraform init
           terraform apply -auto-approve \
