@@ -1,0 +1,68 @@
+name: all deploy
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - .github/workflows/taskdef-push.yml
+      - docker/sample-dev-backend/**
+      - docker/sample-dev-frontend/**
+      - environments/dev/**
+      - modules/**
+
+jobs:
+  push-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Short SHA
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # バックエンドPUSH
+      - name: Build and Push Backend Docker Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: sample-dev-backend
+          IMAGE_TAG: ${{ env.SHORT_SHA }}
+        run: |
+          docker build -f docker/sample-dev-backend/dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/sample-dev-backend
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      # フロントエンドPUSH
+      - name: Build and Push Frontend Docker Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: sample-dev-frontend
+          IMAGE_TAG: ${{ env.SHORT_SHA }}
+        run: |
+          docker build -f docker/sample-dev-frontend/dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/sample-dev-frontend
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      # Terraform セットアップ
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # taskdefのみ更新
+      - name: Update ECS Task Definitions
+        working-directory: environments/dev
+        run: |
+          terraform init
+          terraform apply -auto-approve \
+            -var="backend_image_tag=${{ env.SHORT_SHA }}" \
+            -var="frontend_image_tag=${{ env.SHORT_SHA }}" \
+            -target=module.ecs.aws_ecs_task_definition.ecs_backend_taskdef \
+            -target=module.ecs.aws_ecs_task_definition.ecs_frontend_taskdef

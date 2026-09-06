@@ -3,7 +3,7 @@ name: all deploy
 on:
   push:
     branches:
-      - develop
+      - main
     paths:
       - .github/workflows/infra.yml
       - docker/sample-dev-backend/**
