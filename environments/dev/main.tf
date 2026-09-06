@@ -107,11 +107,11 @@ module "alb" {
   ecs_cluster_id              = module.ecs.ecs_cluster_id
 }
 
-# module "aurora" {
-#   source                          = "../../modules/aurora"
-#   project                         = local.project
-#   environment                     = local.environment
-#   private_subnet_app_db_id        = module.vpc.private_subnet_app_db_id
-#   private_subnet_app_db_id-1c     = module.vpc.private_subnet_app_db_id-1c
-#   aws_security_group_aurora_sg_id = module.vpc.aws_security_group_aurora_sg_id
-# }
+module "aurora" {
+  source                          = "../../modules/aurora"
+  project                         = local.project
+  environment                     = local.environment
+  private_subnet_app_db_id        = module.vpc.private_subnet_app_db_id
+  private_subnet_app_db_id-1c     = module.vpc.private_subnet_app_db_id-1c
+  aws_security_group_aurora_sg_id = module.vpc.aws_security_group_aurora_sg_id
+}
