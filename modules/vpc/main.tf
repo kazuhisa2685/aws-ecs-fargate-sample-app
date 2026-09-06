@@ -315,6 +315,7 @@ resource "aws_vpc_endpoint_route_table_association" "private_app_s3-1c" {
   vpc_endpoint_id = aws_vpc_endpoint.s3.id
   route_table_id  = aws_route_table.private_route_table_app-1c.id
 }
+
 # プライベートサブネット(db)用のルートテーブル
 resource "aws_route_table" "private_route_table_db-1c" {
   vpc_id = aws_vpc.vpc.id
@@ -497,8 +498,8 @@ resource "aws_security_group" "aurora_sg" {
 
   # バックエンドからのリクエスト
   ingress {
-    from_port       = 3306
-    to_port         = 3306
+    from_port       = 5432
+    to_port         = 5432
     protocol        = "tcp"
     security_groups = [aws_security_group.fargate_backend_sg.id]
   }
@@ -627,6 +628,27 @@ resource "aws_vpc_endpoint" "ecs_logs" {
 
   tags = {
     Name    = "${var.project}-${var.environment}-vpc-endpoint-ecr-dkr"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+# VPCエンドポイント（Sercret Manager用）
+resource "aws_vpc_endpoint" "secretsmanager" {
+  vpc_id            = aws_vpc.vpc.id
+  service_name      = "com.amazonaws.ap-northeast-1.secretsmanager"
+  vpc_endpoint_type = "Interface"
+  security_group_ids = [
+    aws_security_group.vpc_endpoint_sg.id
+  ]
+  subnet_ids = [
+    aws_subnet.private_subnet_egress.id
+  ]
+
+  private_dns_enabled = true
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-vpc-endpoint-secretsmanager"
     Project = var.project
     Env     = var.environment
   }
