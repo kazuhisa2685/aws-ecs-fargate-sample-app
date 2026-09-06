@@ -3,6 +3,7 @@ name: Push Docker Image to ECR & Deploy Infrastructure
 on:
   push:
     paths:
+      - .github/workflows/taskdef-push.yml
       - docker/sample-dev-backend/**
       - docker/sample-dev-frontend/**
       - environments/dev/**
