@@ -38,9 +38,9 @@ resource "aws_ecs_service" "ecs_backend_service" {
     assign_public_ip = false
   }
 
-  depends_on = [
-    aws_ecs_task_definition.ecs_backend_taskdef
-  ]
+  # depends_on = [
+  #   aws_ecs_task_definition.ecs_backend_taskdef
+  # ]
   service_connect_configuration {
     enabled   = true
     namespace = aws_service_discovery_http_namespace.main.arn

@@ -3,7 +3,8 @@ name: Push Docker Image to ECR & Deploy to ECS
 on:
   push:
     paths:
-      - '**/deploy_mode'
+      - docker/sample-dev-backend/**
+      - docker/sample-dev-frontend/**
 
 jobs:
   push-and-deploy:
