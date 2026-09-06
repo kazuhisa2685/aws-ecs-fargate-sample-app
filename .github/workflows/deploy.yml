@@ -2,6 +2,8 @@ name: all deploy
 
 on:
   push:
+    branches:
+      - main #一時的に
     paths:
       - .github/workflows/deploy.yml
       - docker/sample-dev-backend/**
