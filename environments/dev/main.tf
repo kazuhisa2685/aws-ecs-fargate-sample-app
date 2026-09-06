@@ -91,6 +91,10 @@ module "ecs" {
   ecs_infrastructure_role_for_load_balancers_arn = module.iam.ecs_infrastructure_role_for_load_balancers_arn
   frontend_image_tag                              = var.frontend_image_tag
   backend_image_tag                               = var.backend_image_tag
+  aws_rds_cluster_aurora_cluster_endpoint             = module.aurora.aws_rds_cluster_aurora_cluster_endpoint
+  aws_rds_cluster_aurora_cluster_master_username        = module.aurora.aws_rds_cluster_aurora_cluster_master_username
+  aws_rds_cluster_aurora_cluster_database_name          = module.aurora.aws_rds_cluster_aurora_cluster_database_name
+  aws_rds_cluster_aurora_cluster_master_user_secret_arn = module.aurora.aws_rds_cluster_aurora_cluster_master_user_secret_arn
 }
 
 module "alb" {

@@ -3,7 +3,7 @@ name: all deploy
 on:
   push:
     branches:
-      - main #一時的に
+      - develop
     paths:
       - .github/workflows/deploy.yml
       - docker/sample-dev-backend/**

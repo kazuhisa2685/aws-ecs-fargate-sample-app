@@ -13,6 +13,7 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
     {
       name  = "main"
       image = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-backend:${var.backend_image_tag}"
+      
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -31,6 +32,20 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
           appProtocol = "http"
         }
       ]
+
+      environment = [
+        { name = "DB_HOST", value = var.aws_rds_cluster_aurora_cluster_endpoint },
+        { name = "DB_USER", value = var.aws_rds_cluster_aurora_cluster_master_username },
+        { name = "DB_PORT", value = "5432" },
+        { name = "DB_NAME", value = var.aws_rds_cluster_aurora_cluster_database_name }
+      ]
+
+      secrets = [
+        {
+          name      = "DB_PASSWORD"
+          valueFrom = "${var.aws_rds_cluster_aurora_cluster_master_user_secret_arn}:password::"
+        }
+      ]     
 
       command = ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
     }
