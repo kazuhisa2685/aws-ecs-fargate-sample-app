@@ -1,13 +1,15 @@
-name: Push Docker Image to ECR & Deploy to ECS
+name: Push Docker Image to ECR & Deploy Infrastructure
 
 on:
   push:
     paths:
       - docker/sample-dev-backend/**
       - docker/sample-dev-frontend/**
+      - environments/dev/**
+      - modules/**
 
 jobs:
-  push-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,11 +25,37 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-1
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # -----------------------------------------------------------------
+      # 1. 構文チェック & 初期化
+      # -----------------------------------------------------------------
+      - name: Terraform Init & Validate
+        working-directory: environments/dev
+        run: |
+          terraform init
+          terraform validate
+
+      # -----------------------------------------------------------------
+      # 2. ECS以外の基礎インフラ（VPC, IAM, ALB, ECR等）を先行デプロイ
+      # -----------------------------------------------------------------
+      - name: Deploy Base Infrastructure (VPC, IAM, ALB, ECR)
+        working-directory: environments/dev
+        run: |
+          terraform apply -auto-approve \
+            -target=module.vpc \
+            -target=module.iam \
+            -target=module.alb \
+            -target=module.ecr
+
+      # -----------------------------------------------------------------
+      # 3. ECRログイン & Dockerイメージの Build / Push
+      # -----------------------------------------------------------------
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # バックエンドPUSH
       - name: Build and Push Backend Docker Image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -37,7 +65,6 @@ jobs:
           docker build -f docker/sample-dev-backend/dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/sample-dev-backend
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # フロントエンドPUSH
       - name: Build and Push Frontend Docker Image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -47,17 +74,24 @@ jobs:
           docker build -f docker/sample-dev-frontend/dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/sample-dev-frontend
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # Terraform セットアップ
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      # taskdefのみ更新
-      - name: Update ECS Task Definitions
+      # -----------------------------------------------------------------
+      # 4. タスク定義を更新（ECRにSHORT_SHAのイメージが存在するため成功する）
+      # -----------------------------------------------------------------
+      - name: Deploy Task Definitions
         working-directory: environments/dev
         run: |
-          terraform init
           terraform apply -auto-approve \
             -var="backend_image_tag=${{ env.SHORT_SHA }}" \
             -var="frontend_image_tag=${{ env.SHORT_SHA }}" \
             -target=module.ecs.aws_ecs_task_definition.ecs_backend_taskdef \
             -target=module.ecs.aws_ecs_task_definition.ecs_frontend_taskdef
+
+      # -----------------------------------------------------------------
+      # 5. ECSサービスおよび残りすべてのインフラ（Cluster等）をデプロイ
+      # -----------------------------------------------------------------
+      - name: Deploy ECS Services & Entire Infrastructure
+        working-directory: environments/dev
+        run: |
+          terraform apply -auto-approve \
+            -var="backend_image_tag=${{ env.SHORT_SHA }}" \
+            -var="frontend_image_tag=${{ env.SHORT_SHA }}"
