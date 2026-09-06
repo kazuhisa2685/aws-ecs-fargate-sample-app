@@ -1,4 +1,4 @@
-name: all deploy
+name: Deploy Infrastructure
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
       - modules/**
 
 jobs:
-  deploy:
+  deploy-infra:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

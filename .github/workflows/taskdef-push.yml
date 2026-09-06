@@ -1,4 +1,4 @@
-name: all deploy
+name: Push Docker Images and Update ECS Task Definitions
 
 on:
   push:
