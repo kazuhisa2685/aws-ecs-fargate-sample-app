@@ -49,4 +49,5 @@ jobs:
             -target=module.iam \
             -target=module.alb \
             -target=module.ecr \
-            -target=module.aurora
+            -target=module.aurora \
+            -target=module.ec2
