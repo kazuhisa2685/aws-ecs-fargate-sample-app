@@ -503,7 +503,12 @@ resource "aws_security_group" "aurora_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.fargate_backend_sg.id]
   }
-
+  ingress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.mgmt_sg.id] #開発端末からのアクセスも許可する
+  }
   egress {
     from_port   = 0
     to_port     = 0

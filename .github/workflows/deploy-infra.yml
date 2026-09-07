@@ -41,7 +41,7 @@ jobs:
       # -----------------------------------------------------------------
       # 2. ECS以外の基礎インフラをデプロイ
       # -----------------------------------------------------------------
-      - name: Deploy Base Infrastructure (VPC, IAM, ALB, ECR, AURORA)
+      - name: Deploy Base Infrastructure (VPC, IAM, ALB, ECR, AURORA, EC2)
         working-directory: environments/dev
         run: |
           terraform apply -auto-approve \
