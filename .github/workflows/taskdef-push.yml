@@ -3,13 +3,11 @@ name: Push Docker Images and Update ECS Task Definitions
 on:
   push:
     branches:
-      - main
+      - develop
     paths:
       - .github/workflows/taskdef-push.yml
       - docker/sample-dev-backend/**
       - docker/sample-dev-frontend/**
-      - environments/dev/**
-      - modules/**
 
 jobs:
   push-and-deploy:
