@@ -3,7 +3,7 @@ name: Deploy Infrastructure and ECS Services with Docker Images
 on:
   push:
     branches:
-      - main
+      - develop
     paths:
       - .github/workflows/deploy.yml
       - docker/sample-dev-backend/**
