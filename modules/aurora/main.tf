@@ -25,6 +25,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
   engine              = "aurora-postgresql"
   engine_mode         = "provisioned"
   master_username     = "adminuser"
+  database_name       = "sampledb"
   skip_final_snapshot = true #検証用のため
 
   # Secrets Managerで管理させる設定
