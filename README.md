@@ -17,11 +17,11 @@ WebアプリケーションをAWS上に構築し、通常時の安定したAPI�
 * Webアプリケーション
 * ECS/Fargate上でコンテナアプリケーションを実行
 * Aurora Serverless v2をデータベースとして利用
+* シングルリージョン、マルチAZ構成
 
 ---
 
-
-## 2. ビジネス要件
+### 2. ビジネス要件
 
 | 項目        | 要件                      |
 | --------- | ----------------------- |
@@ -37,7 +37,7 @@ WebアプリケーションをAWS上に構築し、通常時の安定したAPI�
 
 ---
 
-# 20. インフラストラクチャコード
+### 3. インフラストラクチャコード
 
 Infrastructure as CodeとしてTerraformによる構築を想定する。
 
@@ -61,26 +61,48 @@ TerraformによってAWSリソースをコード化し、環境差分を管理�
 
 ---
 
-# 23. 設計成果物
-
-本ポートフォリオでは、単純なTerraformコードだけではなく、実務の設計工程を意識して以下の成果物を作成する。
+### 4. 設計成果物
 
 ```text
 docs/
-├── architecture.md
-├── architecture.png
-├── network-design.md
-├── security-design.md
-├── availability-design.md
-├── scaling-design.md
-├── monitoring-design.md
-├── disaster-recovery.md
-└── load-test.md
+└── adr/
+    ├── architecture.md
+    ├── network-design.md
+    ├── security-design.md
+    ├── scaling-design.md
+    ├── monitoring-design.md
+    ├── cicd-design.md
+    └── disaster-recovery.md 
 ```
 
 ---
+### 5.技術スタック
 
-# 設計方針
-# 技術スタック
-# セットアップ方法
+#### コンテナオーケストレーション
+- **AWS ECS Fargate**  
+  コンテナのサーバレス実行基盤として採用。EC2 管理不要でスケーラブルな運用を実現。
+- **Application Load Balancer (ALB)**  
+  ECS サービスのトラフィックルーティングとヘルスチェックを担当。
+- **Amazon ECR**  
+  コンテナイメージのレジストリとして利用。
+- **AWS VPC / Subnet / Security Group**  
+  ネットワーク分離とセキュリティ制御。
+
+#### IaC（Infrastructure as Code）
+- **Terraform**  
+  ECS / ALB / VPC / IAM / ECR などの構成管理をコード化。  
+  `modules/` 配下でモジュール化し、`environments/` で環境別に管理。
+
+#### コンテナ / アプリケーション
+- **Docker / Docker Compose**  
+  ローカル開発環境の構築とコンテナ化。
+- **Python (FastAPI)**  
+  Backend / Frontend のサンプルアプリケーション。
+- **requirements.txt**  
+  Python ライブラリの依存管理。
+
+### 6.セットアップ方法
+
+本アプリケーションのデプロイ方法は、GitHub Actionsで統一する。
+
 ---
