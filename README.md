@@ -18,6 +18,11 @@ WebアプリケーションをAWS上に構築し、通常時の安定したAPI�
 * ECS/Fargate上でコンテナアプリケーションを実行
 * Aurora Serverless v2をデータベースとして利用
 * シングルリージョン、マルチAZ構成
+---
+
+![alt text](docs/picture/fargate.jpg)
+
+---
 
 ---
 
