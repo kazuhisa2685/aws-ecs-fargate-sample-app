@@ -5,7 +5,7 @@ on:
     branches:
       - develop
     paths:
-      - .github/workflows/deploy.yml
+      - .github/workflows/deploy-all.yml
       - docker/sample-dev-backend/**
       - docker/sample-dev-frontend/**
       - environments/dev/**

@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - .github/workflows/infra.yml
+      - .github/workflows/deploy-infra.yml
       - environments/dev/**
       - modules/**
 
