@@ -31,6 +31,9 @@ resource "aws_rds_cluster" "aurora_cluster" {
   # Secrets Managerで管理させる設定
   manage_master_user_password = true
 
+  # Data API(クエリエディタ)を有効化する設定
+  enable_http_endpoint = true
+
   # ネットワーク関連
   db_subnet_group_name   = aws_db_subnet_group.aurora.name
   vpc_security_group_ids = [var.aws_security_group_aurora_sg_id]
