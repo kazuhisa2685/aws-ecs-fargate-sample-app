@@ -40,7 +40,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
 
   # Serverless v2 のスケーリング設定
   serverlessv2_scaling_configuration {
-    min_capacity = 0 #非アクティブ時に一時停止
+    min_capacity = 0.5 # コールドスタートがなく即座にクエリに応答できるようにするため、最小値を0.5に設定
     max_capacity = 4
   }
 
