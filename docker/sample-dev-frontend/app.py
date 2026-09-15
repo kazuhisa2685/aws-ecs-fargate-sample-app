@@ -3,10 +3,7 @@ import os
 import requests
 import streamlit as st
 
-if "BACKEND_URL" not in os.environ:
-    raise RuntimeError("BACKEND_URL is not set in environment variables")
-else:
-    BACKEND_URL = os.getenv("BACKEND_URL", "http://backend-service:8000")
+BACKEND_URL = os.getenv("BACKEND_URL", "http://backend-service:8000")
 
 st.set_page_config(page_title="Sample Dev App", page_icon="📝", layout="centered")
 st.title("Sample Memo App")
