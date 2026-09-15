@@ -1,0 +1,16 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# ADR(一時的に)
+ADR
+
+#その他
+memo
+sample-app

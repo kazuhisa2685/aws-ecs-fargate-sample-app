@@ -1,0 +1,123 @@
+name: Deploy Infrastructure and ECS Services with Docker Images
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - .github/workflows/deploy-all.yml
+      - docker/sample-dev-backend/**
+      - docker/sample-dev-frontend/**
+      - environments/dev/**
+      - modules/**
+
+jobs:
+  deploy-infra-and-services-with-docker-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Short SHA
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # -----------------------------------------------------------------
+      # 1. 構文チェック & 初期化
+      # -----------------------------------------------------------------
+      - name: Terraform Init & Validate
+        working-directory: environments/dev
+        run: |
+          terraform init
+          terraform validate
+
+      # -----------------------------------------------------------------
+      # 2. ECS以外の基礎インフラ（VPC, IAM, ALB, ECR等）を先行デプロイ
+      # -----------------------------------------------------------------
+      - name: Deploy Base Infrastructure (VPC, IAM, ALB, ECR)
+        working-directory: environments/dev
+        run: |
+          terraform apply -auto-approve \
+            -target=module.vpc \
+            -target=module.iam \
+            -target=module.alb \
+            -target=module.ecr \
+            -target=module.aurora \
+            -target=module.ec2
+
+      # -----------------------------------------------------------------
+      # 3. ECRログイン & Dockerイメージの Build / Push
+      # -----------------------------------------------------------------
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Backend Docker Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: sample-dev-backend
+          IMAGE_TAG: ${{ env.SHORT_SHA }}
+        run: |
+          docker build -f docker/sample-dev-backend/dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/sample-dev-backend
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Build and Push Frontend Docker Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: sample-dev-frontend
+          IMAGE_TAG: ${{ env.SHORT_SHA }}
+        run: |
+          docker build -f docker/sample-dev-frontend/dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/sample-dev-frontend
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      # -----------------------------------------------------------------
+      # 4. タスク定義を更新（ECRにSHORT_SHAのイメージが存在するため成功する）
+      # -----------------------------------------------------------------
+      - name: Deploy Task Definitions
+        working-directory: environments/dev
+        run: |
+          terraform apply -auto-approve \
+            -var="backend_image_tag=${{ env.SHORT_SHA }}" \
+            -var="frontend_image_tag=${{ env.SHORT_SHA }}" \
+            -target=module.ecs.aws_ecs_task_definition.ecs_backend_taskdef \
+            -target=module.ecs.aws_ecs_task_definition.ecs_frontend_taskdef
+
+      # -----------------------------------------------------------------
+      # 5. バックエンドECSサービスを先行デプロイ
+      # -----------------------------------------------------------------
+      - name: Deploy Backend ECS Service
+        working-directory: environments/dev
+        run: |
+          terraform apply -auto-approve \
+            -var="backend_image_tag=${{ env.SHORT_SHA }}" \
+            -var="frontend_image_tag=${{ env.SHORT_SHA }}" \
+            -target=module.ecs.aws_ecs_service.ecs_backend_service
+
+      # -----------------------------------------------------------------
+      # バックエンドサービスが安定状態（RUNNING & Service Connect疎通可能）になるまで待機
+      # -----------------------------------------------------------------
+      - name: Wait for Backend ECS Service to become Stable
+        run: |
+          aws ecs wait services-stable \
+            --cluster sample-dev-cluster \
+            --services sample-dev-backend-service \
+            --region ap-northeast-1
+
+      # -----------------------------------------------------------------
+      # 6. フロントエンドおよび残りすべてのインフラをデプロイ
+      # -----------------------------------------------------------------
+      - name: Deploy Frontend ECS Service & Entire Infrastructure
+        working-directory: environments/dev
+        run: |
+          terraform apply -auto-approve \
+            -var="backend_image_tag=${{ env.SHORT_SHA }}" \
+            -var="frontend_image_tag=${{ env.SHORT_SHA }}"
