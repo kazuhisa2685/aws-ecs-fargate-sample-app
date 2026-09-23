@@ -50,4 +50,6 @@ jobs:
             -target=module.alb \
             -target=module.ecr \
             -target=module.aurora \
-            -target=module.ec2
+            -target=module.ec2 \
+            -target=module.lambda \
+            -target=module.cloudwatch

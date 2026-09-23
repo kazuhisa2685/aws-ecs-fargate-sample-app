@@ -63,6 +63,7 @@ module "iam" {
   source      = "../../modules/iam"
   project     = local.project
   environment = local.environment
+  function_name = "CallDevopsAgent"
 }
 
 module "ecr" {
@@ -118,4 +119,14 @@ module "aurora" {
   private_subnet_app_db_id        = module.vpc.private_subnet_app_db_id
   private_subnet_app_db_id-1c     = module.vpc.private_subnet_app_db_id-1c
   aws_security_group_aurora_sg_id = module.vpc.aws_security_group_aurora_sg_id
+}
+
+module "lambda" {
+  source      = "../../modules/lambda"
+  project     = local.project
+  environment = local.environment
+  call_devops_agent_name = "CallDevopsAgent"
+  send_msg_name = "SendMsg"
+  call_devops_agent_role_arn = module.iam.lambda_call_devops_agent_role_arn
+  send_msg_role_arn = module.iam.lambda_send_msg_role_arn
 }

@@ -1,0 +1,1 @@
+request%/aws/lambda/get_all_weather_function%fields @timestamp, @message|sort @timestamp desc|limit 50

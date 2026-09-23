@@ -1,3 +1,17 @@
+# AWS アカウント ID とリージョンを自動取得
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+data "aws_ssm_parameter" "devops_agent_name_space" {
+  name            = "/devops-agent/devops_agent_space_id"
+  with_decryption = true
+}
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+  region     = data.aws_region.current.name
+}
+
 ###############################################
 # IAM
 ###############################################
@@ -109,4 +123,147 @@ resource "aws_iam_role_policy" "get_secret_values" {
       }
     ]
   })
+}
+
+
+#-----------------------------------------------------------
+# CallDevopsAgent Lambda Function
+#-----------------------------------------------------------
+resource "aws_iam_role" "call_devops_agent_role" {
+  name = "call-devops-agent-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "call_devops_agent_policy" {
+  name        = "CallDevopsAgent_policy"
+  description = "IAM policy for Lambda logging to CloudWatch and interacting with AI DevOps Agent"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "logs:CreateLogGroup"
+        Resource = "arn:aws:logs:${local.region}:${local.account_id}:*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = [
+          "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/lambda/CallDevopsAgent:*"
+        ]
+      },
+      {
+        Sid    = "UseDevopsAgent"
+        Effect = "Allow"
+        Action = [
+          "aidevops:CreateChat",
+          "aidevops:SendMessage",
+          "aidevops:ListChats"
+        ]
+        Resource = [
+          "arn:aws:aidevops:${local.region}:${local.account_id}:agentspace/${data.aws_ssm_parameter.devops_agent_name_space.value}"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "call_devops_agent_policy_attachment" {
+  policy_arn = aws_iam_policy.call_devops_agent_policy.arn
+  role       = aws_iam_role.call_devops_agent_role.name
+}
+
+#-----------------------------------------------------------
+# SendMsg Lambda Function
+#-----------------------------------------------------------
+resource "aws_iam_role" "send_msg_role" {
+  name = "send-msg-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "send_msg_policy" {
+  name        = "SendMsg_policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowLogGroupCreation"
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup"
+        ]
+        Resource = [
+          "arn:aws:logs:${local.region}:${local.account_id}:*"
+        ]
+      },
+      {
+        Sid    = "AllowSendMsgLogging"
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = [
+          "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/lambda/SendMsg:*"
+        ]
+      },
+      {
+        Sid    = "AllowWeatherFunctionLogQueries"
+        Effect = "Allow"
+        Action = [
+          "logs:StartQuery",
+          "logs:StopQuery",
+          "logs:GetQueryResults",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams"
+        ]
+        Resource = [
+          "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/lambda/get_all_weather_function:*",
+          "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/lambda/get_all_weather_function"
+        ]
+      },
+      {
+        Sid    = "AllowInvokeDevopsAgent"
+        Effect = "Allow"
+        Action = [
+          "lambda:InvokeFunction"
+        ]
+        Resource = [
+          "arn:aws:lambda:${local.region}:${local.account_id}:function:CallDevopsAgent"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "send_msg_policy_attachment" {
+  policy_arn = aws_iam_policy.send_msg_policy.arn
+  role       = aws_iam_role.send_msg_role.name
 }

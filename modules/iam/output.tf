@@ -14,3 +14,10 @@ output "ecs_task_execution_role_arn" {
 output "ecs_infrastructure_role_for_load_balancers_arn" {
   value = aws_iam_role.ecs_infrastructure_role_for_load_balancers.arn
 }
+output "lambda_call_devops_agent_role_arn" {
+  value = aws_iam_role.call_devops_agent_role.arn
+}
+
+output "lambda_send_msg_role_arn" {
+  value = aws_iam_role.send_msg_role.arn  
+}
