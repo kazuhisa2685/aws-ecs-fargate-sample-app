@@ -130,3 +130,11 @@ module "lambda" {
   call_devops_agent_role_arn = module.iam.lambda_call_devops_agent_role_arn
   send_msg_role_arn = module.iam.lambda_send_msg_role_arn
 }
+
+module "cloudwatch" {
+  source = "../../modules/cloudwatch"
+  project     = local.project
+  environment = local.environment
+  ecs_frontend_log_group_name = module.ecs.ecs_frontend_log_group.name
+  ecs_backend_log_group_name = module.ecs.ecs_backend_log_group.name
+}

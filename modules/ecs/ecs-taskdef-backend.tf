@@ -17,7 +17,6 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          # 上で作成したロググループの名前を参照
           "awslogs-group"         = aws_cloudwatch_log_group.ecs_backend_log_group.name
           "awslogs-region"        = "ap-northeast-1"
           "awslogs-stream-prefix" = "ecs"
@@ -52,12 +51,14 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
   ])
 }
 
+#CWロググループはECSとの強い依存関係があるので、ここにいれる。
 resource "aws_cloudwatch_log_group" "ecs_backend_log_group" {
   # タスク定義の logConfiguration で指定する awslogs-group の名前と一致させます
-  name              = "/ecs/sample-dev-backend-task"
+  name              = "/ecs/${var.project}-${var.environment}-backend-task"
   retention_in_days = 30
+
   tags = {
-    Environment = "dev"
-    Application = "sample-backend"
+    Environment = "${var.project}"
+    Application = "${var.environment}"
   }
 }
