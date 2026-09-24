@@ -1,0 +1,10 @@
+{
+  "Records": [
+    {
+      "EventSource": "aws:sns",
+      "Sns": {
+        "Message": "{\"AlarmName\":\"sample-dev-backend-2xx\",\"AlarmDescription\":\"Frontend 200 detected in logs.\",\"AWSAccountId\":\"390844741587\",\"AlarmConfigurationUpdatedTimestamp\":\"2026-09-24T09:46:41.150+0000\",\"NewStateValue\":\"ALARM\",\"NewStateReason\":\"Threshold Crossed: 1 out of the last 1 datapoints [1.0 (24/09/26 09:58:00)] was greater than or equal to the threshold (1.0) (minimum 1 datapoint for OK -> ALARM transition).\",\"StateChangeTime\":\"2026-09-24T09:59:46.475+0000\",\"Region\":\"Asia Pacific (Tokyo)\",\"AlarmArn\":\"arn:aws:cloudwatch:ap-northeast-1:390844741587:alarm:sample-dev-backend-2xx\",\"OldStateValue\":\"OK\",\"ActionExecutedAfterMuteWindow\":false,\"OKActions\":[],\"AlarmActions\":[\"arn:aws:sns:ap-northeast-1:390844741587:SendMsgNotifications\"],\"InsufficientDataActions\":[],\"Trigger\":{\"MetricName\":\"HTTP200Count\",\"Namespace\":\"sample/dev/backend\",\"StatisticType\":\"Statistic\",\"Statistic\":\"SUM\",\"Unit\":null,\"Dimensions\":[],\"Period\":60,\"EvaluationPeriods\":1,\"DatapointsToAlarm\":1,\"ComparisonOperator\":\"GreaterThanOrEqualToThreshold\",\"Threshold\":1.0,\"TreatMissingData\":\"notBreaching\",\"EvaluateLowSampleCountPercentile\":\"\"}}",
+      }
+    }
+  ]
+}

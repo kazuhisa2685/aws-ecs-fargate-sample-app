@@ -138,3 +138,9 @@ module "cloudwatch" {
   ecs_frontend_log_group_name = module.ecs.ecs_frontend_log_group_name
   ecs_backend_log_group_name = module.ecs.ecs_backend_log_group_name
 }
+
+module "cloudwatch" {
+  source = "../../modules/sns"
+  project     = local.project
+  environment = local.environment
+}

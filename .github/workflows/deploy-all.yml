@@ -130,4 +130,5 @@ jobs:
         run: |
           terraform apply -auto-approve \
             -target=module.lambda \
-            -target=module.cloudwatch
+            -target=module.cloudwatch \
+            -target=module.sns
