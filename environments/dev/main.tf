@@ -135,6 +135,6 @@ module "cloudwatch" {
   source = "../../modules/cloudwatch"
   project     = local.project
   environment = local.environment
-  ecs_frontend_log_group_name = module.ecs.ecs_frontend_log_group.name
-  ecs_backend_log_group_name = module.ecs.ecs_backend_log_group.name
+  ecs_frontend_log_group_name = module.ecs.ecs_frontend_log_group_name
+  ecs_backend_log_group_name = module.ecs.ecs_backend_log_group_name
 }
