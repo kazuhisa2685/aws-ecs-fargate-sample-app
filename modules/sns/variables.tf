@@ -10,5 +10,5 @@ variable "environment" {
 }
 
 variable "sendmsg_arn" {
-  type =string
+  type = string
 }
