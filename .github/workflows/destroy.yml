@@ -3,7 +3,7 @@ name: destroy-infra-and-services
 on:
   push:
     branches:
-      - main
+      - develop
     paths:
       - .github/workflows/destroy.yml
 
