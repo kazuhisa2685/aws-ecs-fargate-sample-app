@@ -1,1 +1,2 @@
-request%/aws/lambda/get_all_weather_function%fields @timestamp, @message|sort @timestamp desc|limit 50
+AlarmName%LogGroupName%InsightQuery
+sample-dev-backend-2xx%/ecs/sample-dev-backend-task%fields @timestamp, @message| filter @message like / 200 /| sort @timestamp desc| limit 50

@@ -235,18 +235,25 @@ resource "aws_iam_policy" "send_msg_policy" {
         ]
       },
       {
-        Sid    = "AllowWeatherFunctionLogQueries"
+        "Sid": "AllowLogsStartQuery",
+        "Effect": "Allow",
+        "Action": [
+            "logs:StartQuery"
+        ],
+        "Resource": "*"
+      },
+      {
+        Sid    = "AllowFunctionLogQueries"
         Effect = "Allow"
         Action = [
-          "logs:StartQuery",
           "logs:StopQuery",
           "logs:GetQueryResults",
           "logs:DescribeLogGroups",
           "logs:DescribeLogStreams"
         ]
         Resource = [
-          "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/lambda/get_all_weather_function:*",
-          "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/lambda/get_all_weather_function"
+          "arn:aws:logs:${local.region}:${local.account_id}:log-group:/ecs/sample-dev-backend-task",
+          "arn:aws:logs:${local.region}:${local.account_id}:log-group:/ecs/sample-dev-backend-task:*"
         ]
       },
       {

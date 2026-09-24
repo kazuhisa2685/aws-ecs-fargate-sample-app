@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_log_metric_filter" "frontend_metric_filter" {
-  name           = "${var.project}-${var.environment}-frontend-metric_filter"
+  name           = "${var.project}-${var.environment}-frontend-metric-filter"
   log_group_name = var.ecs_frontend_log_group_name
   pattern        = "{ $.statusCode = 200 }"
 
@@ -12,7 +12,7 @@ resource "aws_cloudwatch_log_metric_filter" "frontend_metric_filter" {
 }
 
 resource "aws_cloudwatch_log_metric_filter" "backend_metric_filter" {
-  name           = "${var.project}-${var.environment}-backend-metric_filter"
+  name           = "${var.project}-${var.environment}-backend-metric-filter"
   log_group_name = var.ecs_backend_log_group_name
   pattern        = "{ $.statusCode = 200 }"
 
