@@ -143,4 +143,5 @@ module "sns" {
   source = "../../modules/sns"
   project     = local.project
   environment = local.environment
+  sendmsg_arn = module.lambda.sendmsg_arn
 }

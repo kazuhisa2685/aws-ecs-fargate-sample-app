@@ -8,3 +8,7 @@ variable "project" {
 variable "environment" {
   type = string
 }
+
+variable "sendmsg_arn" {
+  type =string
+}
