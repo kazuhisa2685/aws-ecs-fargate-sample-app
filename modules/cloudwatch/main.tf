@@ -37,7 +37,7 @@ resource "aws_cloudwatch_metric_alarm" "frontend_metric_alarm" {
   alarm_description   = "Frontend 200 detected in logs."
   treat_missing_data  = "notBreaching"                   # データがない時は「正常」とみなす
 
-  # alarm_actions     = [aws_sns_topic.log_alarm.arn]
+  #alarm_actions     = [aws_sns_topic.log_alarm.arn]
 }
 
 resource "aws_cloudwatch_metric_alarm" "backend_metric_alarm" {
@@ -53,5 +53,5 @@ resource "aws_cloudwatch_metric_alarm" "backend_metric_alarm" {
   alarm_description   = "Frontend 200 detected in logs."
   treat_missing_data  = "notBreaching"                   # データがない時は「正常」とみなす
 
-  # alarm_actions     = [aws_sns_topic.log_alarm.arn]
+  alarm_actions     = [var.sns_sendmsg_arn]
 }

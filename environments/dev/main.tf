@@ -138,6 +138,7 @@ module "cloudwatch" {
   environment = local.environment
   ecs_frontend_log_group_name = module.ecs.ecs_frontend_log_group_name
   ecs_backend_log_group_name = module.ecs.ecs_backend_log_group_name
+  sns_sendmsg_arn = module.sns.sns_sendmsg_arn
 }
 
 module "sns" {
