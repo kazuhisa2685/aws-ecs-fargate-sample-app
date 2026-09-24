@@ -3,7 +3,7 @@ resource "aws_sns_topic" "sns_sendmsg" {
 }
 
 resource "aws_sns_topic_subscription" "sns_subscription_sendmsg" {
-  topic_arn = aws_sns_topic.sendmsg.arn
+  topic_arn = aws_sns_topic.sns_sendmsg.arn
   protocol  = "lambda"
   endpoint  = var.sendmsg_arn
 }
