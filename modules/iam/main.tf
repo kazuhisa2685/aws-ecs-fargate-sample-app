@@ -9,7 +9,7 @@ data "aws_ssm_parameter" "devops_agent_name_space" {
 
 locals {
   account_id = data.aws_caller_identity.current.account_id
-  region     = data.aws_region.current.name
+  region     = data.aws_region.current.region
 }
 
 ###############################################

@@ -24,7 +24,7 @@ resource "aws_cloudwatch_metric_filter" "backend_metric_filter" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "frontend_metric_alarm" {
+resource "aws_cloudwatch_log_metric_alarm" "frontend_metric_alarm" {
   alarm_name          = "${var.project}-${var.environment}-frontend-2xx"
   comparison_operator = "GreaterThanOrEqualToThreshold"  # 閾値以上になったら
   evaluation_periods  = 1                                # 判定を行う評価期間の数（例: 1回）
@@ -40,7 +40,7 @@ resource "aws_cloudwatch_metric_alarm" "frontend_metric_alarm" {
   # alarm_actions     = [aws_sns_topic.log_alarm.arn]
 }
 
-resource "aws_cloudwatch_metric_alarm" "backend_metric_alarm" {
+resource "aws_cloudwatch_log_metric_alarm" "backend_metric_alarm" {
   alarm_name          = "${var.project}-${var.environment}-backend-2xx"
   comparison_operator = "GreaterThanOrEqualToThreshold"  # 閾値以上になったら
   evaluation_periods  = 1                                # 判定を行う評価期間の数（例: 1回）
