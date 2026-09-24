@@ -27,3 +27,7 @@ variable "send_msg_role_arn" {
   description = "ARN of the SendMsg role"
   type        = string
 }
+
+variable "sns_sendmsg_arn" {
+  type = string
+}

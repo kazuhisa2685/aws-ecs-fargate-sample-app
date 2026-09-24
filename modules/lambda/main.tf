@@ -51,3 +51,11 @@ resource "aws_lambda_function" "SendMsg" {
     }
   }
 }
+
+resource "aws_lambda_permission" "lambda_permission_for_sns" {
+  statement_id  = "AllowExecutionFromSNS"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.SendMsg.arn
+  principal     = "sns.amazonaws.com"
+  source_arn    = var.sns_sendmsg_arn
+}

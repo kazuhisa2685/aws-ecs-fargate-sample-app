@@ -129,6 +129,7 @@ module "lambda" {
   send_msg_name = "SendMsg"
   call_devops_agent_role_arn = module.iam.lambda_call_devops_agent_role_arn
   send_msg_role_arn = module.iam.lambda_send_msg_role_arn
+  sns_sendmsg_arn = module.sns.sns_sendmsg_arn
 }
 
 module "cloudwatch" {
