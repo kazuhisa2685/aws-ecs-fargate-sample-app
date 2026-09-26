@@ -254,6 +254,8 @@ resource "aws_iam_policy" "send_msg_policy" {
         Resource = [
           "arn:aws:logs:${local.region}:${local.account_id}:log-group:/ecs/sample-dev-backend-task",
           "arn:aws:logs:${local.region}:${local.account_id}:log-group:/ecs/sample-dev-backend-task:*"
+          "arn:aws:logs:${local.region}:${local.account_id}:log-group:/ecs/sample-dev-frontend-task",
+          "arn:aws:logs:${local.region}:${local.account_id}:log-group:/ecs/sample-dev-frontend-task:*"
         ]
       },
       {
