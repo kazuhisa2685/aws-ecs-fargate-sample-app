@@ -115,8 +115,8 @@ resource "aws_iam_role_policy" "get_secret_values" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect   = "Allow"
-        Action   = [
+        Effect = "Allow"
+        Action = [
           "secretsmanager:GetSecretValue"
         ]
         Resource = "*"
@@ -208,7 +208,7 @@ resource "aws_iam_role" "send_msg_role" {
 }
 
 resource "aws_iam_policy" "send_msg_policy" {
-  name        = "SendMsg_policy"
+  name = "SendMsg_policy"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -235,12 +235,12 @@ resource "aws_iam_policy" "send_msg_policy" {
         ]
       },
       {
-        "Sid": "AllowLogsStartQuery",
-        "Effect": "Allow",
-        "Action": [
-            "logs:StartQuery"
+        "Sid" : "AllowLogsStartQuery",
+        "Effect" : "Allow",
+        "Action" : [
+          "logs:StartQuery"
         ],
-        "Resource": "*"
+        "Resource" : "*"
       },
       {
         Sid    = "AllowFunctionLogQueries"

@@ -13,7 +13,7 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
     {
       name  = "main"
       image = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-backend:${var.backend_image_tag}"
-      
+
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -24,10 +24,10 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
       }
       portMappings = [
         {
-          name        = "backend-port" # ← service_connect_configuration.service.port_name と一致させる必要がある
+          name          = "backend-port" # ← service_connect_configuration.service.port_name と一致させる必要がある
           containerPort = 8000
           #hostPort      = 8080 #Fargateモードだとこれは動かないらしい。
-          protocol = "tcp"
+          protocol    = "tcp"
           appProtocol = "http"
         }
       ]
@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
           name      = "DB_PASSWORD"
           valueFrom = "${var.aws_rds_cluster_aurora_cluster_master_user_secret_arn}:password::"
         }
-      ]     
+      ]
 
       command = ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
     }

@@ -1,2 +1,10 @@
 AlarmName%LogGroupName%InsightQuery
-sample-dev-backend-2xx%/ecs/sample-dev-backend-task%fields @timestamp, @message| filter @message like / 200 /| sort @timestamp desc| limit 50
+sample-dev-backend-3xx%/ecs/sample-dev-backend-task%"fields @timestamp, @message | filter @message like /3\d\d/ | sort @timestamp desc | limit 50"
+sample-dev-backend-4xx%/ecs/sample-dev-backend-task%"fields @timestamp, @message | filter @message like /4\d\d/ | sort @timestamp desc | limit 50"
+sample-dev-backend-5xx%/ecs/sample-dev-backend-task%"fields @timestamp, @message | filter @message like /5\d\d/ | sort @timestamp desc | limit 50"
+sample-dev-backend-error%/ecs/sample-dev-backend-task%"fields @timestamp, @message | filter @message like /ERROR/ or @message like /Exception/ or @message like /Traceback/ | sort @timestamp desc | limit 50"
+sample-dev-backend-timeout%/ecs/sample-dev-backend-task%"fields @timestamp, @message | filter @message like /timeout/ or @message like /timed out/ or @message like /TimeoutError/ | sort @timestamp desc | limit 50"
+sample-dev-backend-db-error%/ecs/sample-dev-backend-task%"fields @timestamp, @message | filter @message like /OperationalError/ or @message like /InterfaceError/ or @message like /could not connect/ or @message like /connection refused/ | sort @timestamp desc | limit 50"
+sample-dev-frontend-2xx%/ecs/sample-dev-frontend-task%"fields @timestamp, @message | filter @message like /200/ | sort @timestamp desc | limit 50"
+sample-dev-frontend-error%/ecs/sample-dev-frontend-task%"fields @timestamp, @message | filter @message like /ERROR/ or @message like /Exception/ or @message like /Traceback/ | sort @timestamp desc | limit 50"
+sample-dev-frontend-backend-unreachable%/ecs/sample-dev-frontend-task%"fields @timestamp, @message | filter @message like /ConnectionError/ or @message like /backend/ or @message like /refused/ | sort @timestamp desc | limit 50"

@@ -60,9 +60,9 @@ module "ec2" {
 }
 
 module "iam" {
-  source      = "../../modules/iam"
-  project     = local.project
-  environment = local.environment
+  source        = "../../modules/iam"
+  project       = local.project
+  environment   = local.environment
   function_name = "CallDevopsAgent"
 }
 
@@ -73,26 +73,26 @@ module "ecr" {
 }
 
 module "ecs" {
-  source                                         = "../../modules/ecs"
-  project                                        = local.project
-  environment                                    = local.environment
-  private_subnet_id                              = module.vpc.private_subnet_app_id
-  private_subnet_id-1c                           = module.vpc.private_subnet_app_id-1c
-  fargate_frontend_sg_id                         = module.vpc.fargate_frontend_sg_id
-  fargate_backend_sg_id                          = module.vpc.fargate_backend_sg_id
-  frontend_target_group_1_arn                    = module.alb.aws_lb_target_group_frontend_target_1.arn
-  frontend_target_group_2_arn                    = module.alb.aws_lb_target_group_frontend_target_2.arn
-  frontend_production_listener_rule_arn          = module.alb.aws_lb_listener_rule_frontend_production_listener_rule.arn
-  frontend_test_listener_rule_arn                = module.alb.aws_lb_listener_rule_frontend_test_listener_rule.arn
-  backend_target_group_1_arn                     = module.alb.aws_lb_target_group_backend_target_1.arn
-  backend_target_group_2_arn                     = module.alb.aws_lb_target_group_backend_target_2.arn
-  backend_production_listener_rule_arn           = module.alb.aws_lb_listener_rule_backend_production_listener_rule.arn
-  backend_test_listener_rule_arn                 = module.alb.aws_lb_listener_rule_backend_test_listener_rule.arn
-  ecs_task_execution_role_arn                    = module.iam.ecs_task_execution_role_arn
-  ecs_infrastructure_role_for_load_balancers_arn = module.iam.ecs_infrastructure_role_for_load_balancers_arn
-  frontend_image_tag                              = var.frontend_image_tag
-  backend_image_tag                               = var.backend_image_tag
-  aws_rds_cluster_aurora_cluster_endpoint             = module.aurora.aws_rds_cluster_aurora_cluster_endpoint
+  source                                                = "../../modules/ecs"
+  project                                               = local.project
+  environment                                           = local.environment
+  private_subnet_id                                     = module.vpc.private_subnet_app_id
+  private_subnet_id-1c                                  = module.vpc.private_subnet_app_id-1c
+  fargate_frontend_sg_id                                = module.vpc.fargate_frontend_sg_id
+  fargate_backend_sg_id                                 = module.vpc.fargate_backend_sg_id
+  frontend_target_group_1_arn                           = module.alb.aws_lb_target_group_frontend_target_1.arn
+  frontend_target_group_2_arn                           = module.alb.aws_lb_target_group_frontend_target_2.arn
+  frontend_production_listener_rule_arn                 = module.alb.aws_lb_listener_rule_frontend_production_listener_rule.arn
+  frontend_test_listener_rule_arn                       = module.alb.aws_lb_listener_rule_frontend_test_listener_rule.arn
+  backend_target_group_1_arn                            = module.alb.aws_lb_target_group_backend_target_1.arn
+  backend_target_group_2_arn                            = module.alb.aws_lb_target_group_backend_target_2.arn
+  backend_production_listener_rule_arn                  = module.alb.aws_lb_listener_rule_backend_production_listener_rule.arn
+  backend_test_listener_rule_arn                        = module.alb.aws_lb_listener_rule_backend_test_listener_rule.arn
+  ecs_task_execution_role_arn                           = module.iam.ecs_task_execution_role_arn
+  ecs_infrastructure_role_for_load_balancers_arn        = module.iam.ecs_infrastructure_role_for_load_balancers_arn
+  frontend_image_tag                                    = var.frontend_image_tag
+  backend_image_tag                                     = var.backend_image_tag
+  aws_rds_cluster_aurora_cluster_endpoint               = module.aurora.aws_rds_cluster_aurora_cluster_endpoint
   aws_rds_cluster_aurora_cluster_master_username        = module.aurora.aws_rds_cluster_aurora_cluster_master_username
   aws_rds_cluster_aurora_cluster_database_name          = module.aurora.aws_rds_cluster_aurora_cluster_database_name
   aws_rds_cluster_aurora_cluster_master_user_secret_arn = module.aurora.aws_rds_cluster_aurora_cluster_master_user_secret_arn
@@ -122,27 +122,27 @@ module "aurora" {
 }
 
 module "lambda" {
-  source      = "../../modules/lambda"
-  project     = local.project
-  environment = local.environment
-  call_devops_agent_name = "CallDevopsAgent"
-  send_msg_name = "SendMsg"
+  source                     = "../../modules/lambda"
+  project                    = local.project
+  environment                = local.environment
+  call_devops_agent_name     = "CallDevopsAgent"
+  send_msg_name              = "SendMsg"
   call_devops_agent_role_arn = module.iam.lambda_call_devops_agent_role_arn
-  send_msg_role_arn = module.iam.lambda_send_msg_role_arn
-  sns_sendmsg_arn = module.sns.sns_sendmsg_arn
+  send_msg_role_arn          = module.iam.lambda_send_msg_role_arn
+  sns_sendmsg_arn            = module.sns.sns_sendmsg_arn
 }
 
 module "cloudwatch" {
-  source = "../../modules/cloudwatch"
-  project     = local.project
-  environment = local.environment
+  source                      = "../../modules/cloudwatch"
+  project                     = local.project
+  environment                 = local.environment
   ecs_frontend_log_group_name = module.ecs.ecs_frontend_log_group_name
-  ecs_backend_log_group_name = module.ecs.ecs_backend_log_group_name
-  sns_sendmsg_arn = module.sns.sns_sendmsg_arn
+  ecs_backend_log_group_name  = module.ecs.ecs_backend_log_group_name
+  sns_sendmsg_arn             = module.sns.sns_sendmsg_arn
 }
 
 module "sns" {
-  source = "../../modules/sns"
+  source      = "../../modules/sns"
   project     = local.project
   environment = local.environment
   sendmsg_arn = module.lambda.sendmsg_arn

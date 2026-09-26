@@ -470,9 +470,9 @@ resource "aws_security_group" "fargate_backend_sg" {
 
   # フロントエンドからのリクエスト
   ingress {
-    from_port       = 8000
-    to_port         = 8000
-    protocol        = "tcp"
+    from_port = 8000
+    to_port   = 8000
+    protocol  = "tcp"
     security_groups = [
       aws_security_group.fargate_frontend_sg.id,
       aws_security_group.alb_sg.id # ALBからのアクセスも許可する ヘルスチェックのため
@@ -480,9 +480,9 @@ resource "aws_security_group" "fargate_backend_sg" {
   }
 
   ingress {
-    from_port       = 8001
-    to_port         = 8001
-    protocol        = "tcp"
+    from_port = 8001
+    to_port   = 8001
+    protocol  = "tcp"
     security_groups = [
       aws_security_group.fargate_frontend_sg.id,
       aws_security_group.alb_sg.id # ALBからのアクセスも許可する ヘルスチェックのため

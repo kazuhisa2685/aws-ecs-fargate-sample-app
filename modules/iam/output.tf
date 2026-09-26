@@ -19,5 +19,5 @@ output "lambda_call_devops_agent_role_arn" {
 }
 
 output "lambda_send_msg_role_arn" {
-  value = aws_iam_role.send_msg_role.arn  
+  value = aws_iam_role.send_msg_role.arn
 }

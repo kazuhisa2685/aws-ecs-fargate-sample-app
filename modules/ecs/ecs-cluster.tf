@@ -29,6 +29,6 @@ resource "aws_ecs_cluster_capacity_providers" "ecs_cluster_capacity_providers" {
 
 #サービスコネクト
 resource "aws_service_discovery_http_namespace" "main" {
-  name = "${var.project}-${var.environment}-namespace"
+  name        = "${var.project}-${var.environment}-namespace"
   description = "Service Discovery Namespace for ${var.project}-${var.environment}"
 }
