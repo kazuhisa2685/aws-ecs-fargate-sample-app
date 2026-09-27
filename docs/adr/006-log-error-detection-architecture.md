@@ -31,14 +31,13 @@ Lambda のエラー検知と DevOps Agent への自動解析依頼を行う仕�
 |--------|------|------|
 | **Metric Filter + Alarm + Lambda + Logs Insights（採用）** | ◎ | ログ量に依存せず安定。Lambda の起動回数が一定で DevOps Agent の負荷も制御できる。過去10分のログをまとめて解析できる |
 | Subscription Filter でログ本文を直接 Lambda に渡す | △ | ログ量が多いと Lambda が大量起動し、DevOps Agent に大量の解析依頼が飛ぶ。誤検知やコスト増のリスクが高い |
-| Lambda 側でログのバッチング・キューイングを実装 | × | CloudWatch Logs のストリーム特性上、Lambda 側でのバッチングは困難。複雑化し保守性が低下する |
 | DevOps Agent 側で大量リクエストを吸収する仕組みを作る | × | AgentSpace の実行数が爆増しコストが跳ね上がる。根本的な問題解決にならない |
 
 ---
 
 ## 選定理由（Metric Filter を採用した背景）
 
-### 1. **Subscription Filter は大量ログで Lambda が爆発する**
+### 1. **Subscription Filter は大量ログで Lambda がスロットリングを起こす**
 Subscription Filter はログ行数に比例して Lambda が起動する。
 
 - 1秒間に100行ログ → Lambda が100回起動  
@@ -99,8 +98,8 @@ Subscription Filter はログフォーマットの揺れや誤検知が多く、
 
 **悪い点**
 
-- ログ本文をリアルタイムに Lambda に渡すことはできない  
-- Logs Insights のクエリ実行コストが発生する（ただし少額）
+- ログ本文をリアルタイムに Lambda に渡すことはできない 
+- Insight_query.csvの管理コストがある。メンバがSendMsgを理解しないといけない。
 
 ---
 
@@ -109,20 +108,10 @@ Subscription Filter はログフォーマットの揺れや誤検知が多く、
 ログ検知方式は「ログをどう扱いたいか」だけでなく、  
 **ログ量・Lambda の同時実行数・外部サービス（DevOps Agent）の負荷**まで含めて設計すべきである。
 
-Subscription Filter はシンプルだが、大量ログ環境では破滅的な挙動をする。  
+Subscription Filter はシンプルだが、大量ログ環境では破滅的な挙動をする。
 一方、Metric Filter はログ本文を直接渡せないという制約があるものの、  
 **安定性・コスト・運用性の観点で圧倒的に優れている。**
 
 今回の検討を通じて、  
 「ログ量が多い環境では、リアルタイム性よりも安定性を優先すべき」  
 という設計判断の重要性を再確認した。
-
----
-
-## Links
-
-- CloudWatch Logs Insights  
-- AWS DevOps Agent Integration Notes  
-- Internal Architecture Discussion (2026-09)
-
----

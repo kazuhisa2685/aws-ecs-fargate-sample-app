@@ -1,4 +1,4 @@
-# 008. フロントエンド → バックエンドの名前解決方式の選定（ECS Service Connect）
+# 007. フロントエンド → バックエンドの名前解決方式の選定（ECS Service Connect）
 
 - **Status**: 採用 (Accepted)
 - **Date**: 2026-09-27
@@ -22,18 +22,6 @@ Issue #1 の記録では、まずアプリケーション側の既定値が原�
 > バックエンドが立ち上がる⇒ServiceConnectで名前解決を行う⇒ほぼ同時にフロントが立ち上がり、バックエンドのURLが完成する前にBACKEND_URLを参照する。⇒名前解決ができずにエラー発生。
 
 対処としてデプロイ手順に `aws ecs wait services-stable` が挿入された。
-
-## 現状の実装（As-Is）
-
-| 項目 | 実装 | 定義 |
-| --- | --- | --- |
-| アプリ側の既定値 | `BACKEND_URL = os.getenv("BACKEND_URL", "http://backend-service:8000")`（既定がサービスディスカバリ名に変更済み） | `docker/sample-dev-frontend/app.py` |
-| 名前空間 | `aws_service_discovery_http_namespace` を `${project}-${environment}-namespace` として作成し、クラスタの `service_connect_defaults` に既定として設定 | `modules/ecs/ecs-cluster.tf` |
-| バックエンド側の公開 | `service_connect_configuration` で `discovery_name = "backend-service"`、`port_name = "backend-port"`、`client_alias { port = 8000, dns_name = "backend-service" }` | `modules/ecs/ecs-service-backend.tf` |
-| ポート名の整合 | タスク定義の `portMappings.name = "backend-port"`（`service_connect_configuration.port_name` と一致させる必要がある旨がコメントで明記） | `modules/ecs/ecs-taskdef-backend.tf` |
-| フロントエンド側 | フロントにも `service_connect_configuration` を定義 | `modules/ecs/ecs-service-frontend.tf` |
-| デプロイ順序 | バックエンドのタスク定義・サービスを適用した後、フロントエンドをデプロイ。間に `aws ecs wait services-stable` を挿入 | `.github/workflows/deploy-all.yml` |
-| 内部ALB | **存在しない**（ALBはインターネット向けの1台のみ。バックエンドTGはそのALB配下） | `modules/alb/main.tf` |
 
 ## 検討した選択肢
 

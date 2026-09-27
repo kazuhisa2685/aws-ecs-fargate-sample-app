@@ -1,4 +1,4 @@
-# 009. バックエンドのデプロイ方式の選定（ECS標準 Blue/Green vs ローリング更新）
+# 008. バックエンドのデプロイ方式の選定（ECS標準 Blue/Green vs ローリング更新）
 
 - **Status**: 採用 (Accepted)
 - **Date**: 2026-09-27
@@ -10,23 +10,6 @@
 バックエンド（およびフロントエンド）のコンテナを更新するとき、**どの方式で新バージョンへ切り替えるか**を決める必要があった。
 
 検討対象は、ECSが標準で提供する **Blue/Green（`deployment_configuration { strategy = "BLUE_GREEN" }`）** と、従来型の **ローリング更新** である。判断に影響したのは、この基盤が「AZ障害時もサービス継続」「障害時も可能な限り通常時と同等の性能を維持」を要件としている点、そして実際に [Issue #6] で `Task failed ELB health checks` によりタスクが停止ループに陥った経験がある点である。デプロイ時に異常をどう検出してどう戻すかは、可用性要件と直結する。
-
-## 現状の実装（As-Is）
-
-| 項目 | 実装 | 定義 |
-| --- | --- | --- |
-| デプロイ制御 | `deployment_controller { type = "ECS" }` | `modules/ecs/ecs-service-*.tf` |
-| 戦略 | `deployment_configuration { strategy = "BLUE_GREEN", bake_time_in_minutes = 1 }` | 同上 |
-| ロールバック | `deployment_circuit_breaker { enable = true, rollback = true }` | 同上 |
-| ターゲットグループ | サービスごとに2本（`*_target_1` の重み100 / `*_target_2` の重み0） | `modules/alb/main.tf` |
-| リスナー | 本番 1500（フロント）/ 8000（バック）、テスト 1501 / 8001。いずれもHTTP | 同上 |
-| リスナールール | 本番・テストの各ルールに `lifecycle { ignore_changes = [action] }`（ECSが重みを書き換えるため、Terraformが差分を打ち消さない設定） | 同上 |
-| ECSへのLB操作権限 | `advanced_configuration { ... role_arn = var.ecs_infrastructure_role_for_load_balancers_arn }`（ECSがELBを操作するためのロール） | `modules/ecs/ecs-service-*.tf` / `modules/iam/main.tf` |
-| ヘルスチェック | `interval = 60` / `timeout = 5` / `healthy_threshold = 3` / `unhealthy_threshold = 2`（正常判定に最大180秒） | `modules/alb/main.tf` |
-| ローリング用パラメータ | `deployment_minimum_healthy_percent` / `maximum_percent` は**未設定** | `modules/ecs/ecs-service-*.tf` |
-| アラーム連動ロールバック | `deployment_circuit_breaker` に `alarms` の指定は無い（ヘルスチェック起因のみ） | 同上 |
-| サービス側の例外 | `lifecycle { ignore_changes = [task_definition] }` | 同上（[ADR-011](./011-initial-deploy-bootstrap.md) 参照） |
-| テスト用経路の公開範囲 | テストリスナー 1501 / 8001 が `0.0.0.0/0` に開放 | `modules/vpc/main.tf`（ALB SG）/ [security-design.md](./security-design.md) D-4 |
 
 ## 検討した選択肢
 

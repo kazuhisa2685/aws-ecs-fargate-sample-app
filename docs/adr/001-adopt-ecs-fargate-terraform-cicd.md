@@ -2,9 +2,9 @@
 
 - **Status**: 採用 (Accepted)
 - **Date**: 2026-09
-- **Related Issues**: 本 ADR は後続のすべての ADR (0002〜0006) の前提となる決定
+- **Related Issues**: -
 
-## Context (背景)
+## 背景
 
 Streamlit(フロントエンド)+ FastAPI(バックエンド)+ PostgreSQL 系 DB からなるアプリケーションを、ポートフォリオとして外部に公開する必要があった。
 
@@ -12,33 +12,32 @@ Streamlit(フロントエンド)+ FastAPI(バックエンド)+ PostgreSQL 系 DB
 
 - クラウドネイティブな AWS マネージドサービスでの運用経験を示したい
 - インフラをコードで再現可能にしたい(手作業でのコンソール構築を排除)
-- デプロイを push をトリガーに自動化したい
+- デプロイを push をトリガーに自動化したい(EC2でもできなくはないが、ECRにpushするほうが簡単という意味で)
 
-## Decision Drivers (決定要因)
+## 決定要因
 
 1. **運用工数を抑えたい**: サーバーのパッチ適用やキャパシティ管理はしたくない
 2. **IaC による再現性**: 手順書ではなくコードでインフラを表現したい
 3. **CI/CD との一体性**: イメージタグをコミットハッシュ (`SHORT_SHA`) で一意に管理し、トレーサビリティを確保したい
 4. **コスト**: 学習用途のため、常時課金が最小であることが望ましい
 
-## Considered Options (検討した選択肢)
+## 検討した選択肢
 
 | 選択肢 | 評価 | 採用しなかった理由 |
 |--------|------|--------------------|
-| **EC2 + docker compose** | △ | 最も簡単だが、サーバー管理・手動デプロイが残る。オーケストレーションの学びが薄い |
-| **ECS on EC2 (EC2 起動タイプ)** | △ | コストを最適化できるが、インスタンス管理が発生し Fargate の旨味がない |
-| **EKS** | × | 本規模では過剰。クラスタ自体の運用コスト(コントロールプレーン料金)が高い |
-| **App Runner / Lambda** | × | 2 コンテナ構成とヘルスチェック・サイドカー的な自由度の観点で制約が大きい |
+| **EC2 + docker compose** | △ | 最も簡単だが、サーバー管理・手動デプロイが残る。 |
+| **ECS on EC2 (EC2 起動タイプ)** | △ | コストを最適化できるが、インスタンス管理が発生する。 |
+| **EKS** | × | 本規模では過剰。クラスタ自体の運用コスト(コントロールプレーン料金)が高い。そもそも kubernetes を今回は使用しない。 |
 | **ECS Fargate (採用)** | ◎ | サーバーレスでコンテナ完結。Terraform と GitHub Actions との親和性が高い |
 
-## Decision Outcome (決定)
+## 決定
 
 **ECS Fargate を実行基盤とし、インフラは Terraform で、CI/CD は GitHub Actions で構築する。**
 
 - イメージは ECR にプッシュし、タグは GitHub のコミットハッシュ (`SHORT_SHA`) を使用する
-- タスク定義のイメージタグもこの `SHORT_SHA` を参照する(この判断が [ADR-0005](0005-staged-terraform-apply-for-initial-deploy.md) の初回デプロイ問題を生むことになる)
+- タスク定義のイメージタグもこの `SHORT_SHA` を参照する。
 
-## Consequences (結果)
+## 結果
 
 **良い点**
 
@@ -48,14 +47,9 @@ Streamlit(フロントエンド)+ FastAPI(バックエンド)+ PostgreSQL 系 DB
 
 **悪い点**
 
-- Terraform 初回適用時の「ECR が無いのにタスク定義がイメージを参照する」問題が発生した(→ [ADR-0005](0005-staged-terraform-apply-for-initial-deploy.md) で解決)
-- Fargate + Aurora の組み合わせは学習用途としてはコストが高くなりがちで、停止運用の工夫が必要
-
-## 学び
-
-インフラ構成の選択は「何を学びたいか」と「何を運用から排除したいか」のトレードオフで決めるべき。本プロジェクトでは ECS Fargate を選んだことで、後に VPC Endpoint・Secrets Manager・ALB ヘルスチェックなど、**マネージドサービス間のネットワーク境界で発生する実践的な問題**を多数経験できた。EC2 で素通りできていた層の問題が可視化されるのは Fargate 選択の大きな副次効果だった。
+- Terraform 初回適用時の「ECR が無いのにタスク定義がイメージを参照する」問題が発生した(→ [004](004-staged-terraform-apply-for-initial-deploy.md) で解決)
 
 ## Links
 
 - リポジトリ: https://github.com/kazuhisa2685/aws-ecs-fargate-sample-app
-- 関連 ADR: [0005](0005-staged-terraform-apply-for-initial-deploy.md)
+- 関連 ADR: [004](004-staged-terraform-apply-for-initial-deploy.md) 
