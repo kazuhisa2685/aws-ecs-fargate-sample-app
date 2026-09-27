@@ -75,4 +75,3 @@
 ## Links
 
 - 関連ドキュメント: [012-backend-deployment-strategy.md](./012-backend-deployment-strategy.md)、[security-design.md](./security-design.md) D-3 / D-4、[network-design.md](./network-design.md)
-- 参考メモ: `docs/review/ECS`

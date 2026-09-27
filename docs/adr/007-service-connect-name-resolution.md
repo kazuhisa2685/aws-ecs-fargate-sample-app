@@ -3,7 +3,6 @@
 - **Status**: 採用 (Accepted)
 - **Date**: 2026-09-27
 - **出典**: [Issue #1](https://github.com/kazuhisa2685/aws-ecs-fargate-sample-app/issues/1)「フロントエンドECS　⇒　バックエンドECSへの接続ができない件について」 / [Issue #7](https://github.com/kazuhisa2685/aws-ecs-fargate-sample-app/issues/7)「初回デプロイ時のバックエンド接続エラー」
-- **Related**: `modules/ecs/ecs-cluster.tf` / `modules/ecs/ecs-service-backend.tf` / `modules/ecs/ecs-service-frontend.tf` / `modules/ecs/ecs-taskdef-backend.tf` / `docker/sample-dev-frontend/app.py` / `.github/workflows/deploy-all.yml`
 
 ## 背景
 
@@ -56,7 +55,7 @@ Issue #1 の記録では、まずアプリケーション側の既定値が原�
 
 ## 学び
 
-**接続先の「既定値」は、環境が変われば必ず嘘になる。** `os.getenv("BACKEND_URL", "http://localhost:8000")` はローカル開発のための妥当な既定値だが、コンテナでは自分自身を指すため、**ネットワークは正常なのにアプリだけが失敗する**という切り分けの難しい症状を生む。Issue #1 に「ネットワークの問題ではない」と記録されていることが、この症状の性質をよく示している。
+ `os.getenv("BACKEND_URL", "http://localhost:8000")` はローカル開発のための妥当な既定値だが、コンテナでは自分自身を指すため、**ネットワークは正常なのにアプリだけが失敗する**という切り分けの難しい症状を生む。Issue #1 に「ネットワークの問題ではない」と記録されていることが、この症状の性質をよく示している。
 
 また、名前解決は「仕組みを入れる」だけでは完結せず、**起動順序まで含めて設計対象**である。サービスディスカバリを導入した結果として、デプロイ手順に待機が必要になった（Issue #7）。仕組みの導入と、それを運用する手順はセットで設計しなければならない。
 
