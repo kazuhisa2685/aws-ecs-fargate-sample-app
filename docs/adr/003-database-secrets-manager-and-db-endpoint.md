@@ -1,4 +1,4 @@
-# 0004. DB 接続先の configurable 化と認証情報の Secrets Manager 管理
+# 003. DB 接続先の configurable 化と認証情報の Secrets Manager 管理
 
 - **Status**: 採用 (Accepted)
 - **Date**: 2026-09

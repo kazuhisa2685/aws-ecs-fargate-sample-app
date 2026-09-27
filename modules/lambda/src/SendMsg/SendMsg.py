@@ -362,7 +362,7 @@ def lambda_handler(event, context):
     # 発生直後のログ遅延を考慮し、直近10分間のエラーログを漏れなく
     # 確実に収集するために60秒待機する
     logger.info("%d秒待機します(ログ遅延考慮)...", WAIT_SECONDS_BEFORE_QUERY)
-    #time.sleep(WAIT_SECONDS_BEFORE_QUERY)
+    time.sleep(WAIT_SECONDS_BEFORE_QUERY)
 
     # --- 3. CSVマッピングのロード・該当行検索 ----------------------
     try:

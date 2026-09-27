@@ -1,4 +1,4 @@
-# 0003. プライベートサブネットからの CloudWatch Logs 出力に VPC Endpoint を採用
+# 002. プライベートサブネットからの CloudWatch Logs 出力に VPC Endpoint を採用
 
 - **Status**: 採用 (Accepted)
 - **Date**: 2026-09

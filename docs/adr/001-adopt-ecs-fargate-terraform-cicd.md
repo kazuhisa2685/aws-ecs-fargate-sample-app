@@ -1,4 +1,4 @@
-# 0001. デプロイ基盤として ECS Fargate × Terraform × GitHub Actions を採用
+# 001. デプロイ基盤として ECS Fargate × Terraform × GitHub Actions を採用
 
 - **Status**: 採用 (Accepted)
 - **Date**: 2026-09

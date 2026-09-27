@@ -1,4 +1,4 @@
-# ADR-008. CloudWatch Logs のエラー検知方式の選定（Metric Filter vs Subscription Filter）
+# 006. CloudWatch Logs のエラー検知方式の選定（Metric Filter vs Subscription Filter）
 
 - **Status**: 採用 (Accepted)  
 - **Date**: 2026-09  

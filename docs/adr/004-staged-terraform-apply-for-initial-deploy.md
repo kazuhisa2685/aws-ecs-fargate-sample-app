@@ -1,4 +1,4 @@
-# 0005. 初回デプロイの鶏と卵問題に対する段階的 `terraform apply` の採用
+# 004. 初回デプロイの段階的 `terraform apply` の採用
 
 - **Status**: 採用 (Accepted)
 - **Date**: 2026-09-06
