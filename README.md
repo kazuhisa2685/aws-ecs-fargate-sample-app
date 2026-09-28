@@ -70,14 +70,16 @@ TerraformによってAWSリソースをコード化し、環境差分を管理�
 
 ```text
 docs/
-└── adr/
-    ├── architecture.md
-    ├── network-design.md
-    ├── security-design.md
-    ├── scaling-design.md
-    ├── monitoring-design.md
-    ├── cicd-design.md
-    └── disaster-recovery.md 
+ └── adr/
+     ├── 001-adopt-ecs-fargate-terraform-cicd.md
+     ├── 002-cloudwatch-logs-vpc-endpoint.md
+     ├── 003-database-secrets-manager-and-db-endpoint.md
+     ├── 004-staged-terraform-apply-for-initial-deploy.md
+     ├── 005-container-communication-endpoint-resolution.md
+     ├── 006-log-error-detection-architecture.md
+     ├── 007-service-connect-name-resolution.md
+     ├── 008-backend-deployment-strategy.md
+     └── 009-maintenance-page.md
 ```
 
 ---

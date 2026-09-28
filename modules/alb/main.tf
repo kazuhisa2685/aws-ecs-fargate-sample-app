@@ -52,7 +52,7 @@ resource "aws_lb_target_group" "frontend_target_1" {
 # ターゲットグループ　フロントエンド２
 resource "aws_lb_target_group" "frontend_target_2" {
   name        = "${var.project}-${var.environment}-frontend-target-2"
-  port        =  1501
+  port        = 1501
   protocol    = "HTTP"
   target_type = "ip" #Fargateでは、タスクごとにENIが作成され、タスク自身がVPC内のプライベートIPアドレスを持つため
   vpc_id      = var.vpc_id

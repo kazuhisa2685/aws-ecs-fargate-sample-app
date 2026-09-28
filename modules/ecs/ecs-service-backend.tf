@@ -46,10 +46,10 @@ resource "aws_ecs_service" "ecs_backend_service" {
     namespace = aws_service_discovery_http_namespace.main.arn
 
     service {
-      discovery_name    = "backend-service" # ← ほかのコンテナから見上げる時のホスト名になる
-      port_name         = "backend-port"     # ← タスク定義の portMappings.name と一致させる必要がある
+      discovery_name = "backend-service" # ← ほかのコンテナから見上げる時のホスト名になる
+      port_name      = "backend-port"    # ← タスク定義の portMappings.name と一致させる必要がある
       client_alias {
-        port = 8000
+        port     = 8000
         dns_name = "backend-service"
       }
     }

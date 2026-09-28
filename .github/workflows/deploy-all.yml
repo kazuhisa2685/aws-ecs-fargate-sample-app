@@ -3,7 +3,7 @@ name: Deploy Infrastructure and ECS Services with Docker Images
 on:
   push:
     branches:
-      - develop
+      - main
     paths:
       - .github/workflows/deploy-all.yml
       - docker/sample-dev-backend/**
@@ -121,3 +121,14 @@ jobs:
           terraform apply -auto-approve \
             -var="backend_image_tag=${{ env.SHORT_SHA }}" \
             -var="frontend_image_tag=${{ env.SHORT_SHA }}"
+
+      # -----------------------------------------------------------------
+      # 7. 監視機能
+      # -----------------------------------------------------------------
+      - name: Deploy Monitoring
+        working-directory: environments/dev
+        run: |
+          terraform apply -auto-approve \
+            -target=module.lambda \
+            -target=module.cloudwatch \
+            -target=module.sns

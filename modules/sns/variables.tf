@@ -9,6 +9,6 @@ variable "environment" {
   type = string
 }
 
-variable "function_name" {
+variable "sendmsg_arn" {
   type = string
 }
