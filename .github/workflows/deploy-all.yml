@@ -1,15 +1,8 @@
 name: Deploy Infrastructure and ECS Services with Docker Images
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - .github/workflows/deploy-all.yml
-      - docker/sample-dev-backend/**
-      - docker/sample-dev-frontend/**
-      - environments/dev/**
-      - modules/**
+  workflow_dispatch:   # pushトリガーを廃止し、手動実行＋Environment保護（要承認）に変更
+    inputs: { confirm: { description: "deploy-all", required: true } }
 
 env:
   AWS_REGION: ap-northeast-1
