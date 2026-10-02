@@ -1,6 +1,7 @@
 name: Deploy Infrastructure and ECS Services with Docker Images
 
 on:
+  push:
   workflow_dispatch:
 
 env:
