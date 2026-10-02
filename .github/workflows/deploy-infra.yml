@@ -1,8 +1,7 @@
 name: Deploy Infrastructure
 
 on:
-  workflow_dispatch:   # pushトリガーを廃止し、手動実行＋Environment保護（要承認）に変更
-    inputs: { confirm: { description: "deploy-all", required: true } }
+  workflow_dispatch:
 
 env:
   AWS_REGION: ap-northeast-1
