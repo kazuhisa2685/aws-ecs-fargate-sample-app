@@ -11,6 +11,9 @@ on:
       - environments/dev/**
       - modules/**
 
+env:
+  AWS_REGION: ap-northeast-1
+
 permissions:
   id-token: write
   contents: read
