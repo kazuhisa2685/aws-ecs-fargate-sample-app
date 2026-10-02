@@ -108,7 +108,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
 # ECSタスク実行用のIAMロールにSecrets Managerへのアクセス権限を付与
 
 resource "aws_iam_role_policy" "get_secret_values" {
-  name = "GetSercretValues"
+  name = "GetSecretValues"
   role = aws_iam_role.ecs_task_execution_role.id
 
   policy = jsonencode({
