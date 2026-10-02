@@ -205,28 +205,28 @@ resource "aws_cloudwatch_metric_alarm" "backend_db_error_alarm" {
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# [Frontend] 2xx メトリクスフィルター
-# アクセスログから HTTP 200 レスポンスをカウントする
+# [Frontend] 3xx メトリクスフィルター
+# アクセスログから HTTP 300 レスポンスをカウントする
 # 修正: パターンをプレーンテキスト形式に変更（JSON 形式から変更）
 # 修正: alarm_actions / ok_actions を追加
 # ------------------------------------------------------------------------------
 resource "aws_cloudwatch_log_metric_filter" "frontend_metric_filter" {
   name           = "${var.project}-${var.environment}-frontend-metric-filter"
   log_group_name = var.ecs_frontend_log_group_name
-  pattern        = "[ip, id, user, timestamp, request, status_code=200, size]"
+  pattern        = "[ip, id, user, timestamp, request, status_code=300, size]"
 
   metric_transformation {
-    name          = "FrontendHTTP200Count"
+    name          = "FrontendHTTP300Count"
     namespace     = "${var.project}/${var.environment}/Frontend"
     value         = "1"
     default_value = "0"
   }
 }
 
-# [Frontend] 2xx アラーム — HTTP 200 を検知したら SNS に通知する
+# [Frontend] 3xx アラーム — HTTP 300 を検知したら SNS に通知する
 # 修正: alarm_actions（欠落していた）と ok_actions を追加
 resource "aws_cloudwatch_metric_alarm" "frontend_metric_alarm" {
-  alarm_name          = "${var.project}-${var.environment}-frontend-2xx"
+  alarm_name          = "${var.project}-${var.environment}-frontend-3xx"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
   metric_name         = aws_cloudwatch_log_metric_filter.frontend_metric_filter.metric_transformation[0].name
@@ -234,7 +234,7 @@ resource "aws_cloudwatch_metric_alarm" "frontend_metric_alarm" {
   period              = 60
   statistic           = "Sum"
   threshold           = 1
-  alarm_description   = "Frontend HTTP 200 detected in logs."
+  alarm_description   = "Frontend HTTP 300 detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
   ok_actions          = [var.sns_sendmsg_arn]

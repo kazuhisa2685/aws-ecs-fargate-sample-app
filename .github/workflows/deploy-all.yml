@@ -1,15 +1,14 @@
 name: Deploy Infrastructure and ECS Services with Docker Images
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - .github/workflows/deploy-all.yml
-      - docker/sample-dev-backend/**
-      - docker/sample-dev-frontend/**
-      - environments/dev/**
-      - modules/**
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-northeast-1
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   deploy-infra-and-services-with-docker-images:
@@ -21,12 +20,11 @@ jobs:
       - name: Set Short SHA
         run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: configure aws credential
+        uses: aws-actions/configure-aws-credentials@v6
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-1
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
