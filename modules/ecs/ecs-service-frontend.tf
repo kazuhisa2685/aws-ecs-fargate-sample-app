@@ -18,7 +18,7 @@ resource "aws_ecs_service" "ecs_frontend_service" {
   }
   deployment_configuration {
     strategy             = "BLUE_GREEN"
-    bake_time_in_minutes = 1
+    bake_time_in_minutes = 5
   }
   deployment_circuit_breaker {
     enable   = true

@@ -35,7 +35,7 @@ resource "aws_lb_target_group" "frontend_target_1" {
 
   health_check {
     path                = "/_stcore/health"
-    interval            = 60
+    interval            = 15
     timeout             = 5
     healthy_threshold   = 3
     unhealthy_threshold = 2
@@ -59,7 +59,7 @@ resource "aws_lb_target_group" "frontend_target_2" {
 
   health_check {
     path                = "/_stcore/health"
-    interval            = 60
+    interval            = 15
     timeout             = 5
     healthy_threshold   = 3
     unhealthy_threshold = 2
@@ -173,7 +173,7 @@ resource "aws_lb_target_group" "backend_target_1" {
 
   health_check {
     path                = "/health"
-    interval            = 60
+    interval            = 15
     timeout             = 5
     healthy_threshold   = 3
     unhealthy_threshold = 2
@@ -197,7 +197,7 @@ resource "aws_lb_target_group" "backend_target_2" {
 
   health_check {
     path                = "/health"
-    interval            = 60
+    interval            = 15
     timeout             = 5
     healthy_threshold   = 3
     unhealthy_threshold = 2
