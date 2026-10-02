@@ -9,6 +9,13 @@ on:
       - docker/sample-dev-backend/**
       - docker/sample-dev-frontend/**
 
+env:
+  AWS_REGION: ap-northeast-1
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   push-and-deploy:
     runs-on: ubuntu-latest
@@ -19,12 +26,11 @@ jobs:
       - name: Set Short SHA
         run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: configure aws credential
+        uses: aws-actions/configure-aws-credentials@v6
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-1
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
 
       - name: Login to Amazon ECR
         id: login-ecr
