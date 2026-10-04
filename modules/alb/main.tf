@@ -10,7 +10,7 @@ resource "aws_lb" "main" {
   security_groups    = [var.alb_sg_id]
   subnets = [
     var.public_subnet_ingress_id,
-    var.public_subnet_ingress_id-1c
+    var.public_subnet_ingress_id_1c
   ]
 
   enable_deletion_protection = false

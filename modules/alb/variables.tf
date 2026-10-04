@@ -13,7 +13,7 @@ variable "vpc_id" {
 variable "public_subnet_ingress_id" {
   type = string
 }
-variable "public_subnet_ingress_id-1c" {
+variable "public_subnet_ingress_id_1c" {
   type = string
 }
 variable "alb_sg_id" {
@@ -22,7 +22,7 @@ variable "alb_sg_id" {
 variable "private_subnet_id" {
   type = string
 }
-variable "private_subnet_id-1c" {
+variable "private_subnet_id_1c" {
   type = string
 }
 

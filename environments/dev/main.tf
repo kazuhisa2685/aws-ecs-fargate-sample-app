@@ -77,7 +77,7 @@ module "ecs" {
   project                                               = local.project
   environment                                           = local.environment
   private_subnet_id                                     = module.vpc.private_subnet_app_id
-  private_subnet_id-1c                                  = module.vpc.private_subnet_app_id-1c
+  private_subnet_id_1c                                  = module.vpc.private_subnet_app_id_1c
   fargate_frontend_sg_id                                = module.vpc.fargate_frontend_sg_id
   fargate_backend_sg_id                                 = module.vpc.fargate_backend_sg_id
   frontend_target_group_1_arn                           = module.alb.aws_lb_target_group_frontend_target_1.arn
@@ -103,11 +103,11 @@ module "alb" {
   project                     = local.project
   environment                 = local.environment
   public_subnet_ingress_id    = module.vpc.public_subnet_ingress_id
-  public_subnet_ingress_id-1c = module.vpc.public_subnet_ingress_id-1c
+  public_subnet_ingress_id_1c = module.vpc.public_subnet_ingress_id_1c
   alb_sg_id                   = module.vpc.alb_sg_id
   vpc_id                      = module.vpc.vpc_id
   private_subnet_id           = module.vpc.private_subnet_app_id
-  private_subnet_id-1c        = module.vpc.private_subnet_app_id-1c
+  private_subnet_id_1c        = module.vpc.private_subnet_app_id_1c
   fargate_frontend_sg_id      = module.vpc.fargate_frontend_sg_id
   ecs_cluster_id              = module.ecs.ecs_cluster_id
 }
@@ -117,7 +117,7 @@ module "aurora" {
   project                         = local.project
   environment                     = local.environment
   private_subnet_app_db_id        = module.vpc.private_subnet_app_db_id
-  private_subnet_app_db_id-1c     = module.vpc.private_subnet_app_db_id-1c
+  private_subnet_app_db_id_1c     = module.vpc.private_subnet_app_db_id_1c
   aws_security_group_aurora_sg_id = module.vpc.aws_security_group_aurora_sg_id
 }
 

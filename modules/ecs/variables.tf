@@ -10,7 +10,7 @@ variable "environment" {
 variable "private_subnet_id" {
   type = string
 }
-variable "private_subnet_id-1c" {
+variable "private_subnet_id_1c" {
   type = string
 }
 

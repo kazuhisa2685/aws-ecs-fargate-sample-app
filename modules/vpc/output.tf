@@ -42,15 +42,15 @@ output "private_subnet_app_db_id" {
 # availability_zone 1c
 #############################################
 
-output "public_subnet_ingress_id-1c" {
-  value = aws_subnet.public_subnet_ingress-1c.id
+output "public_subnet_ingress_id_1c" {
+  value = aws_subnet.public_subnet_ingress_1c.id
 }
 
-output "private_subnet_app_id-1c" {
-  value = aws_subnet.private_subnet_app-1c.id
+output "private_subnet_app_id_1c" {
+  value = aws_subnet.private_subnet_app_1c.id
 }
-output "private_subnet_app_db_id-1c" {
-  value = aws_subnet.private_subnet_db-1c.id
+output "private_subnet_app_db_id_1c" {
+  value = aws_subnet.private_subnet_db_1c.id
 }
 
 output "aws_security_group_aurora_sg_id" {

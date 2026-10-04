@@ -36,7 +36,7 @@ resource "aws_ecs_service" "ecs_frontend_service" {
     }
   }
   network_configuration {
-    subnets          = [var.private_subnet_id, var.private_subnet_id-1c]
+    subnets          = [var.private_subnet_id, var.private_subnet_id_1c]
     security_groups  = [var.fargate_frontend_sg_id]
     assign_public_ip = false
   }

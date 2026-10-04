@@ -9,7 +9,7 @@ resource "aws_db_subnet_group" "aurora" {
 
   subnet_ids = [
     var.private_subnet_app_db_id,
-    var.private_subnet_app_db_id-1c,
+    var.private_subnet_app_db_id_1c,
   ]
 
   tags = {

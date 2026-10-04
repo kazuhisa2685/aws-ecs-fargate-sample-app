@@ -13,7 +13,7 @@ variable "private_subnet_app_db_id" {
   type = string
 }
 
-variable "private_subnet_app_db_id-1c" {
+variable "private_subnet_app_db_id_1c" {
   type = string
 }
 variable "aws_security_group_aurora_sg_id" {
