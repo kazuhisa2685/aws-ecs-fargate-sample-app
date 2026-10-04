@@ -56,7 +56,7 @@ resource "aws_iam_role" "ecs_infrastructure_role_for_load_balancers" {
 
   # 信頼関係
   assume_role_policy = jsonencode({
-    Version = "2008-10-17"
+    Version = "2012-10-17"
     Statement = [
       {
         Sid    = ""
@@ -87,7 +87,7 @@ resource "aws_iam_role" "ecs_task_execution_role" {
 
   # 信頼関係
   assume_role_policy = jsonencode({
-    Version = "2008-10-17"
+    Version = "2012-10-17"
     Statement = [
       {
         Sid    = ""
