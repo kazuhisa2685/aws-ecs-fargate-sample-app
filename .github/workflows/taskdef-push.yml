@@ -54,7 +54,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # taskdefのみ更新
+      # taskdefのみ更新(更新は手動で行う)
       - name: Update ECS Task Definitions
         working-directory: environments/dev
         run: |
