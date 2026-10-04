@@ -41,7 +41,7 @@ CSV_FILE_PATH = os.environ.get(
 CSV_DELIMITER = "%"
 
 # 後続Lambda(CallDevopsAgent)の関数名・呼び出し方式
-DOWNSTREAM_LAMBDA_NAME = os.environ.get("CALL_DEVOPS_AGNT_LAMBDA_NAME", "CallDevopsAgent")
+DOWNSTREAM_LAMBDA_NAME = os.environ.get("CALL_DEVOPS_AGENT_LAMBDA_NAME", "CallDevopsAgent")
 # "Event" = 非同期呼び出し / "RequestResponse" = 同期呼び出し
 INVOCATION_TYPE = os.environ.get("INVOCATION_TYPE", "Event")
 
