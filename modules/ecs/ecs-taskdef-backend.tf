@@ -58,7 +58,7 @@ resource "aws_cloudwatch_log_group" "ecs_backend_log_group" {
   retention_in_days = 30
 
   tags = {
-    Environment = "${var.project}"
-    Application = "${var.environment}"
+    Environment = "${var.environment}"
+    project = "${var.project}"
   }
 }
