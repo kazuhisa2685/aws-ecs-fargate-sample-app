@@ -21,7 +21,7 @@ Webアプリケーションを AWS 上に構築し、通常時の安定した AP
 
 ---
 
-![alt text](docs/picture/fargate.jpg)
+![alt text](docs/picture/Arch.png)
 
 ---
 
