@@ -7,10 +7,7 @@ resource "aws_db_subnet_group" "aurora" {
   name        = "${var.project}-${var.environment}-aurora-subnet-group"
   description = "Aurora DB subnet group"
 
-  subnet_ids = [
-    var.private_subnet_app_db_id,
-    var.private_subnet_app_db_id_1c,
-  ]
+  subnet_ids = var.private_subnet_db_ids
 
   tags = {
     Name        = "${var.project}-${var.environment}-aurora-subnet-group"

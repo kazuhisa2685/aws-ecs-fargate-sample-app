@@ -8,10 +8,7 @@ resource "aws_lb" "main" {
   internal           = false #インターネット向けという意味
   load_balancer_type = "application"
   security_groups    = [var.alb_sg_id]
-  subnets = [
-    var.public_subnet_ingress_id,
-    var.public_subnet_ingress_id_1c
-  ]
+  subnets            = var.public_subnet_ingress_ids
 
   enable_deletion_protection = false
 

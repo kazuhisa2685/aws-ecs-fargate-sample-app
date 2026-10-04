@@ -59,6 +59,6 @@ resource "aws_cloudwatch_log_group" "ecs_backend_log_group" {
 
   tags = {
     Environment = "${var.environment}"
-    project = "${var.project}"
+    project     = "${var.project}"
   }
 }

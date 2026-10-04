@@ -10,22 +10,12 @@ variable "environment" {
 variable "vpc_id" {
   type = string
 }
-variable "public_subnet_ingress_id" {
-  type = string
-}
-variable "public_subnet_ingress_id_1c" {
-  type = string
+variable "public_subnet_ingress_ids" {
+  type = list(string)
 }
 variable "alb_sg_id" {
   type = string
 }
-variable "private_subnet_id" {
-  type = string
-}
-variable "private_subnet_id_1c" {
-  type = string
-}
-
 variable "fargate_frontend_sg_id" {
   type = string
 }

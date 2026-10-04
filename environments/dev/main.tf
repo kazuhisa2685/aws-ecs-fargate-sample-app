@@ -54,7 +54,7 @@ module "ec2" {
   source               = "../../modules/ec2"
   project              = local.project
   environment          = local.environment
-  subnet_id            = module.vpc.public_subnet_mgmt_id
+  subnet_ids           = module.vpc.public_subnet_mgmt_ids
   iam_instance_profile = module.iam.iam_instance_profile.name
   mgmt_sg_id           = module.vpc.mgmt_sg_id
 }
@@ -76,22 +76,21 @@ module "ecs" {
   source                                                = "../../modules/ecs"
   project                                               = local.project
   environment                                           = local.environment
-  private_subnet_id                                     = module.vpc.private_subnet_app_id
-  private_subnet_id_1c                                  = module.vpc.private_subnet_app_id_1c
+  private_subnet_app_ids                                = module.vpc.private_subnet_app_ids
   fargate_frontend_sg_id                                = module.vpc.fargate_frontend_sg_id
   fargate_backend_sg_id                                 = module.vpc.fargate_backend_sg_id
+  ecs_task_execution_role_arn                           = module.iam.ecs_task_execution_role_arn
+  ecs_infrastructure_role_for_load_balancers_arn        = module.iam.ecs_infrastructure_role_for_load_balancers_arn
+  frontend_image_tag                                    = var.frontend_image_tag
   frontend_target_group_1_arn                           = module.alb.aws_lb_target_group_frontend_target_1.arn
   frontend_target_group_2_arn                           = module.alb.aws_lb_target_group_frontend_target_2.arn
   frontend_production_listener_rule_arn                 = module.alb.aws_lb_listener_rule_frontend_production_listener_rule.arn
   frontend_test_listener_rule_arn                       = module.alb.aws_lb_listener_rule_frontend_test_listener_rule.arn
+  backend_image_tag                                     = var.backend_image_tag
   backend_target_group_1_arn                            = module.alb.aws_lb_target_group_backend_target_1.arn
   backend_target_group_2_arn                            = module.alb.aws_lb_target_group_backend_target_2.arn
   backend_production_listener_rule_arn                  = module.alb.aws_lb_listener_rule_backend_production_listener_rule.arn
   backend_test_listener_rule_arn                        = module.alb.aws_lb_listener_rule_backend_test_listener_rule.arn
-  ecs_task_execution_role_arn                           = module.iam.ecs_task_execution_role_arn
-  ecs_infrastructure_role_for_load_balancers_arn        = module.iam.ecs_infrastructure_role_for_load_balancers_arn
-  frontend_image_tag                                    = var.frontend_image_tag
-  backend_image_tag                                     = var.backend_image_tag
   aws_rds_cluster_aurora_cluster_endpoint               = module.aurora.aws_rds_cluster_aurora_cluster_endpoint
   aws_rds_cluster_aurora_cluster_master_username        = module.aurora.aws_rds_cluster_aurora_cluster_master_username
   aws_rds_cluster_aurora_cluster_database_name          = module.aurora.aws_rds_cluster_aurora_cluster_database_name
@@ -99,25 +98,21 @@ module "ecs" {
 }
 
 module "alb" {
-  source                      = "../../modules/alb"
-  project                     = local.project
-  environment                 = local.environment
-  public_subnet_ingress_id    = module.vpc.public_subnet_ingress_id
-  public_subnet_ingress_id_1c = module.vpc.public_subnet_ingress_id_1c
-  alb_sg_id                   = module.vpc.alb_sg_id
-  vpc_id                      = module.vpc.vpc_id
-  private_subnet_id           = module.vpc.private_subnet_app_id
-  private_subnet_id_1c        = module.vpc.private_subnet_app_id_1c
-  fargate_frontend_sg_id      = module.vpc.fargate_frontend_sg_id
-  ecs_cluster_id              = module.ecs.ecs_cluster_id
+  source                    = "../../modules/alb"
+  project                   = local.project
+  environment               = local.environment
+  public_subnet_ingress_ids = module.vpc.public_subnet_ingress_ids
+  alb_sg_id                 = module.vpc.alb_sg_id
+  vpc_id                    = module.vpc.vpc_id
+  fargate_frontend_sg_id    = module.vpc.fargate_frontend_sg_id
+  ecs_cluster_id            = module.ecs.ecs_cluster_id
 }
 
 module "aurora" {
   source                          = "../../modules/aurora"
   project                         = local.project
   environment                     = local.environment
-  private_subnet_app_db_id        = module.vpc.private_subnet_app_db_id
-  private_subnet_app_db_id_1c     = module.vpc.private_subnet_app_db_id_1c
+  private_subnet_db_ids           = module.vpc.private_subnet_db_ids
   aws_security_group_aurora_sg_id = module.vpc.aws_security_group_aurora_sg_id
 }
 

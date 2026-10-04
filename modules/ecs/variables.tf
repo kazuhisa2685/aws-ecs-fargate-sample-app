@@ -7,11 +7,8 @@ variable "project" {
 variable "environment" {
   type = string
 }
-variable "private_subnet_id" {
-  type = string
-}
-variable "private_subnet_id_1c" {
-  type = string
+variable "private_subnet_app_ids" {
+  type = list(string)
 }
 
 variable "fargate_frontend_sg_id" {
