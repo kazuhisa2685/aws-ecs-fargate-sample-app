@@ -32,7 +32,6 @@ resource "aws_cloudwatch_metric_alarm" "backend_3xx_alarm" {
   alarm_description   = "Backend 3xx error detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
-  ok_actions          = [var.sns_sendmsg_arn]
 }
 # ------------------------------------------------------------------------------
 # [Backend] 4xx メトリクスフィルター
@@ -64,7 +63,6 @@ resource "aws_cloudwatch_metric_alarm" "backend_4xx_alarm" {
   alarm_description   = "Backend 4xx error detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
-  ok_actions          = [var.sns_sendmsg_arn]
 }
 
 # ------------------------------------------------------------------------------
@@ -97,7 +95,6 @@ resource "aws_cloudwatch_metric_alarm" "backend_5xx_alarm" {
   alarm_description   = "Backend 5xx server error detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
-  ok_actions          = [var.sns_sendmsg_arn]
 }
 
 # ------------------------------------------------------------------------------
@@ -130,7 +127,6 @@ resource "aws_cloudwatch_metric_alarm" "backend_error_alarm" {
   alarm_description   = "Backend application error (ERROR/Exception/Traceback) detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
-  ok_actions          = [var.sns_sendmsg_arn]
 }
 
 # ------------------------------------------------------------------------------
@@ -163,7 +159,6 @@ resource "aws_cloudwatch_metric_alarm" "backend_timeout_alarm" {
   alarm_description   = "Backend timeout error detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
-  ok_actions          = [var.sns_sendmsg_arn]
 }
 
 # ------------------------------------------------------------------------------
@@ -196,7 +191,6 @@ resource "aws_cloudwatch_metric_alarm" "backend_db_error_alarm" {
   alarm_description   = "Backend DB connection error (OperationalError/InterfaceError/connection refused) detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
-  ok_actions          = [var.sns_sendmsg_arn]
 }
 
 
@@ -237,7 +231,6 @@ resource "aws_cloudwatch_metric_alarm" "frontend_metric_alarm" {
   alarm_description   = "Frontend HTTP 300 detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
-  ok_actions          = [var.sns_sendmsg_arn]
 }
 
 # ------------------------------------------------------------------------------
@@ -270,7 +263,6 @@ resource "aws_cloudwatch_metric_alarm" "frontend_4xx_alarm" {
   alarm_description   = "Frontend 4xx error detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
-  ok_actions          = [var.sns_sendmsg_arn]
 }
 
 # ------------------------------------------------------------------------------
@@ -303,7 +295,6 @@ resource "aws_cloudwatch_metric_alarm" "frontend_5xx_alarm" {
   alarm_description   = "Frontend 5xx server error detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
-  ok_actions          = [var.sns_sendmsg_arn]
 }
 
 # ------------------------------------------------------------------------------
@@ -336,7 +327,6 @@ resource "aws_cloudwatch_metric_alarm" "frontend_error_alarm" {
   alarm_description   = "Frontend application error (ERROR/Exception/Traceback) detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
-  ok_actions          = [var.sns_sendmsg_arn]
 }
 
 # ------------------------------------------------------------------------------
@@ -369,7 +359,6 @@ resource "aws_cloudwatch_metric_alarm" "frontend_timeout_alarm" {
   alarm_description   = "Frontend timeout error detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
-  ok_actions          = [var.sns_sendmsg_arn]
 }
 
 # ------------------------------------------------------------------------------
@@ -403,5 +392,4 @@ resource "aws_cloudwatch_metric_alarm" "frontend_backend_unreachable_alarm" {
   alarm_description   = "Frontend cannot reach backend (ConnectionError/refused) detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
-  ok_actions          = [var.sns_sendmsg_arn]
 }
