@@ -48,7 +48,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
 #インスタンス
 resource "aws_rds_cluster_instance" "aurora_instances" {
   count              = 1
-  identifier         = "my-aurora-dev-instance-${count.index}"
+  identifier         = "${var.project}-${var.environment}-aurora-instance-${count.index}"
   cluster_identifier = aws_rds_cluster.aurora_cluster.id
 
   instance_class = "db.serverless"
