@@ -1,9 +1,6 @@
 name: destroy-infra-and-services
 
 on:
-  push:
-    branches:
-      - develop
   workflow_dispatch:
 
 env:
