@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
   container_definitions = jsonencode([
     {
       name  = "main"
-      image = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/sample-dev-backend:${var.backend_image_tag}"
+      image = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/${var.project}-${var.environment}-backend:${var.backend_image_tag}"
 
       logConfiguration = {
         logDriver = "awslogs"
@@ -58,7 +58,7 @@ resource "aws_cloudwatch_log_group" "ecs_backend_log_group" {
   retention_in_days = 30
 
   tags = {
-    Environment = "${var.project}"
-    Application = "${var.environment}"
+    Environment = "${var.environment}"
+    project     = "${var.project}"
   }
 }

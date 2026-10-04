@@ -18,7 +18,7 @@ locals {
 
 # 1. EC2用のIAMロールを作成
 resource "aws_iam_role" "ssm_role" {
-  name = "ec2-ssm-role"
+  name = "${var.project}-${var.environment}-ec2-ssm-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -42,7 +42,7 @@ resource "aws_iam_role_policy_attachment" "ssm_policy" {
 
 # 3. インスタンスプロファイルを作成
 resource "aws_iam_instance_profile" "ssm_profile" {
-  name = "ec2-ssm-instance-profile"
+  name = "${var.project}-${var.environment}-ec2-ssm-instance-profile"
   role = aws_iam_role.ssm_role.name
 }
 
@@ -51,12 +51,12 @@ resource "aws_iam_instance_profile" "ssm_profile" {
 ################################################
 
 resource "aws_iam_role" "ecs_infrastructure_role_for_load_balancers" {
-  name        = "EcsInfrastructureRoleForLoadBalancers"
+  name        = "${var.project}-${var.environment}-ecs-infrastructure-role-for-load-balancers"
   description = "Allows ECS to create and manage AWS resources on your behalf."
 
   # 信頼関係
   assume_role_policy = jsonencode({
-    Version = "2008-10-17"
+    Version = "2012-10-17"
     Statement = [
       {
         Sid    = ""
@@ -82,12 +82,12 @@ resource "aws_iam_role_policy_attachment" "ecs_infrastructure_role_policy_for_lo
 
 # ECSタスク実行用のIAMロールを作成
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name        = "EcsTaskExecutionRole"
+  name        = "${var.project}-${var.environment}-ecs-task-execution-role"
   description = "Allows ECS tasks to call AWS services on your behalf."
 
   # 信頼関係
   assume_role_policy = jsonencode({
-    Version = "2008-10-17"
+    Version = "2012-10-17"
     Statement = [
       {
         Sid    = ""
@@ -108,7 +108,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
 # ECSタスク実行用のIAMロールにSecrets Managerへのアクセス権限を付与
 
 resource "aws_iam_role_policy" "get_secret_values" {
-  name = "GetSercretValues"
+  name = "${var.project}-${var.environment}-ecs-get-secret-values"
   role = aws_iam_role.ecs_task_execution_role.id
 
   policy = jsonencode({
@@ -130,7 +130,7 @@ resource "aws_iam_role_policy" "get_secret_values" {
 # CallDevopsAgent Lambda Function
 #-----------------------------------------------------------
 resource "aws_iam_role" "call_devops_agent_role" {
-  name = "call-devops-agent-role"
+  name = "${var.project}-${var.environment}-call-devops-agent-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -146,7 +146,7 @@ resource "aws_iam_role" "call_devops_agent_role" {
 }
 
 resource "aws_iam_policy" "call_devops_agent_policy" {
-  name        = "CallDevopsAgent_policy"
+  name        = "${var.project}-${var.environment}-call-devops-agent-policy"
   description = "IAM policy for Lambda logging to CloudWatch and interacting with AI DevOps Agent"
 
   policy = jsonencode({
@@ -192,7 +192,7 @@ resource "aws_iam_role_policy_attachment" "call_devops_agent_policy_attachment" 
 # SendMsg Lambda Function
 #-----------------------------------------------------------
 resource "aws_iam_role" "send_msg_role" {
-  name = "send-msg-role"
+  name = "${var.project}-${var.environment}-send-msg-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -208,7 +208,7 @@ resource "aws_iam_role" "send_msg_role" {
 }
 
 resource "aws_iam_policy" "send_msg_policy" {
-  name = "SendMsg_policy"
+  name = "${var.project}-${var.environment}-send-msg-policy"
 
   policy = jsonencode({
     Version = "2012-10-17"

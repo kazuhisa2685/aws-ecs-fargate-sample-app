@@ -44,20 +44,25 @@ jobs:
       - name: Destroy Base Infrastructure
         working-directory: environments/dev
         run: |
-          # 環境に存在するすべてのリソースを削除する。
-          # まずはECSのサービスを削除する。
-          for i in {1..3}; do
-            terraform destroy -auto-approve \
-              -target=module.ecs
-              if [ $? -eq 0 ]; then
-                break
+          # 引数のコマンドを最大3回リトライする。全部失敗したら非0を返す。
+          retry() {
+            local max=3
+            local wait_sec=30
+            for i in $(seq 1 "$max"); do
+              echo "::group::attempt $i/$max: $*"
+              if "$@"; then
+                return 0
               fi
-          done
-          
-          # その後、残りのリソースを削除する。回数は3回に分けて実行する。理由は、ECSサービス削除後にALBのターゲットグループが残っている場合があり、削除に失敗するため。
-          for i in {1..3}; do
-            terraform destroy -auto-approve
-            if [ $? -eq 0 ]; then
-              break
-            fi
-          done
+              echo "attempt $i/$max failed"
+              if [ "$i" -lt "$max" ]; then
+                sleep "$wait_sec"
+              fi
+            done
+            return 1
+          }
+
+          # 1. まずECSを削除（サービス削除後にTGが残って失敗することがあるためリトライ）
+          retry terraform destroy -auto-approve -target=module.ecs
+
+          # 2. 残りのリソースを削除
+          retry terraform destroy -auto-approve

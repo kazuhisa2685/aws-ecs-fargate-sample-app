@@ -15,7 +15,7 @@ resource "aws_ecs_service" "ecs_backend_service" {
   }
   deployment_configuration {
     strategy             = "BLUE_GREEN"
-    bake_time_in_minutes = 1
+    bake_time_in_minutes = 5
   }
   deployment_circuit_breaker {
     enable   = true
@@ -33,7 +33,7 @@ resource "aws_ecs_service" "ecs_backend_service" {
     }
   }
   network_configuration {
-    subnets          = [var.private_subnet_id, var.private_subnet_id-1c]
+    subnets          = var.private_subnet_app_ids
     security_groups  = [var.fargate_backend_sg_id]
     assign_public_ip = false
   }

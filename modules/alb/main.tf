@@ -8,10 +8,7 @@ resource "aws_lb" "main" {
   internal           = false #インターネット向けという意味
   load_balancer_type = "application"
   security_groups    = [var.alb_sg_id]
-  subnets = [
-    var.public_subnet_ingress_id,
-    var.public_subnet_ingress_id-1c
-  ]
+  subnets            = var.public_subnet_ingress_ids
 
   enable_deletion_protection = false
 
@@ -35,7 +32,7 @@ resource "aws_lb_target_group" "frontend_target_1" {
 
   health_check {
     path                = "/_stcore/health"
-    interval            = 60
+    interval            = 15
     timeout             = 5
     healthy_threshold   = 3
     unhealthy_threshold = 2
@@ -59,7 +56,7 @@ resource "aws_lb_target_group" "frontend_target_2" {
 
   health_check {
     path                = "/_stcore/health"
-    interval            = 60
+    interval            = 15
     timeout             = 5
     healthy_threshold   = 3
     unhealthy_threshold = 2
@@ -173,7 +170,7 @@ resource "aws_lb_target_group" "backend_target_1" {
 
   health_check {
     path                = "/health"
-    interval            = 60
+    interval            = 15
     timeout             = 5
     healthy_threshold   = 3
     unhealthy_threshold = 2
@@ -197,7 +194,7 @@ resource "aws_lb_target_group" "backend_target_2" {
 
   health_check {
     path                = "/health"
-    interval            = 60
+    interval            = 15
     timeout             = 5
     healthy_threshold   = 3
     unhealthy_threshold = 2
