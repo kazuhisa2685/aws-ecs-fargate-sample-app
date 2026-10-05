@@ -12,13 +12,13 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
   container_definitions = jsonencode([
     {
       name  = "main"
-      image = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/${var.project}-${var.environment}-backend:${var.backend_image_tag}"
+      image = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.region}.amazonaws.com/${var.project}-${var.environment}-backend:${var.backend_image_tag}"
 
       logConfiguration = {
         logDriver = "awslogs"
         options = {
           "awslogs-group"         = aws_cloudwatch_log_group.ecs_backend_log_group.name
-          "awslogs-region"        = "ap-northeast-1"
+          "awslogs-region"        = "${data.aws_region.current.region}"
           "awslogs-stream-prefix" = "ecs"
         }
       }
@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
       secrets = [
         {
           name      = "DB_PASSWORD"
-          valueFrom = "${var.aws_rds_cluster_aurora_cluster_master_user_secret_arn}:password::"
+          valueFrom = "${data.aws_caller_identity.current.account_id}:${var.aws_rds_cluster_aurora_cluster_master_user_secret_arn}:password::"
         }
       ]
 

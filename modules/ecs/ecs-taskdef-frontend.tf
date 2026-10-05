@@ -12,12 +12,12 @@ resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
   container_definitions = jsonencode([
     {
       name  = "app"
-      image = "390844741587.dkr.ecr.ap-northeast-1.amazonaws.com/${var.project}-${var.environment}-frontend:${var.frontend_image_tag}"
+      image = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.region}.amazonaws.com/${var.project}-${var.environment}-frontend:${var.frontend_image_tag}"
       logConfiguration = {
         logDriver = "awslogs"
         options = {
           "awslogs-group"         = aws_cloudwatch_log_group.ecs_frontend_log_group.name
-          "awslogs-region"        = "ap-northeast-1"
+          "awslogs-region"        = "${data.aws_region.current.region}"
           "awslogs-stream-prefix" = "ecs"
         }
       }
