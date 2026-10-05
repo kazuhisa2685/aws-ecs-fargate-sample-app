@@ -200,24 +200,24 @@ resource "aws_cloudwatch_metric_alarm" "backend_db_error_alarm" {
 
 # ------------------------------------------------------------------------------
 # [Frontend] 3xx メトリクスフィルター
-# アクセスログから HTTP 300 レスポンスをカウントする
+# アクセスログから HTTP 3xx レスポンスをカウントする
 # 修正: パターンをプレーンテキスト形式に変更（JSON 形式から変更）
 # 修正: alarm_actions / ok_actions を追加
 # ------------------------------------------------------------------------------
 resource "aws_cloudwatch_log_metric_filter" "frontend_metric_filter" {
   name           = "${var.project}-${var.environment}-frontend-metric-filter"
   log_group_name = var.ecs_frontend_log_group_name
-  pattern        = "[ip, id, user, timestamp, request, status_code=300, size]"
+  pattern        = "[ip, id, user, timestamp, request, status_code=3*, size]"
 
   metric_transformation {
-    name          = "FrontendHTTP300Count"
+    name          = "FrontendHTTP3XXCount"
     namespace     = "${var.project}/${var.environment}/Frontend"
     value         = "1"
     default_value = "0"
   }
 }
 
-# [Frontend] 3xx アラーム — HTTP 300 を検知したら SNS に通知する
+# [Frontend] 3xx アラーム — HTTP 3xx を検知したら SNS に通知する
 # 修正: alarm_actions（欠落していた）と ok_actions を追加
 resource "aws_cloudwatch_metric_alarm" "frontend_metric_alarm" {
   alarm_name          = "${var.project}-${var.environment}-frontend-3xx"
@@ -228,7 +228,7 @@ resource "aws_cloudwatch_metric_alarm" "frontend_metric_alarm" {
   period              = 60
   statistic           = "Sum"
   threshold           = 1
-  alarm_description   = "Frontend HTTP 300 detected in logs."
+  alarm_description   = "Frontend HTTP 3xx detected in logs."
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_sendmsg_arn]
 }
