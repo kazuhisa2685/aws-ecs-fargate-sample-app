@@ -103,6 +103,10 @@ Terraformによってリソースをコード化し、`modules/` のモジュー
 
 ## 4. 設計成果物
 
+設計や構築作業にあたって、詰まったところや、その背景を ADR や Issue などにまとめました。
+
+### ADR
+
 ```text
 docs/
  └── adr/
@@ -117,6 +121,18 @@ docs/
      └── 009-maintenance-page.md
 ```
 
+### Issue
+
+| Issue | 概要 |
+|---|---|
+| [#1](https://github.com/kazuhisa2685/aws-ecs-fargate-sample-app/issues/1) | フロントエンド ECS からバックエンド ECS に接続できない問題 |
+| [#2](https://github.com/kazuhisa2685/aws-ecs-fargate-sample-app/issues/2) | ECS のログが CloudWatch Logs に表示されない問題 |
+| [#3](https://github.com/kazuhisa2685/aws-ecs-fargate-sample-app/issues/3) | バックエンド ECS から Aurora に接続できない問題 |
+| [#4](https://github.com/kazuhisa2685/aws-ecs-fargate-sample-app/issues/4) | 初回デプロイ時、ECR にイメージがなくタスク定義が失敗する問題。`-target` による段階的な apply で暫定対応し、恒久対策を検討中（Open） |
+| [#5](https://github.com/kazuhisa2685/aws-ecs-fargate-sample-app/issues/5) | Git で一度 push した大文字のフォルダ名を、小文字に変更できない問題 |
+| [#6](https://github.com/kazuhisa2685/aws-ecs-fargate-sample-app/issues/6) | ALB 経由でアクセスできない問題 |
+| [#7](https://github.com/kazuhisa2685/aws-ecs-fargate-sample-app/issues/7) | 初回デプロイ時のみフロントからバックエンドに接続できない問題。Service Connect の名前解決前にフロントが起動していたことが原因で、サービス安定化を待つ処理を追加 |
+| [#10](https://github.com/kazuhisa2685/aws-ecs-fargate-sample-app/issues/10) | CI が静的アクセスキーを使用していた問題。OIDC 認証に変更 |
 ---
 
 ## 5. ネットワーク設計
@@ -246,6 +262,5 @@ docker compose up --build
 | 高 | Aurora が1インスタンス構成のため、AZ障害時は新インスタンス作成待ちになる（要件との乖離） |
 | 高 | テストリスナー（1501 / 8001）が `0.0.0.0/0` に開放されている |
 | 中 | Backend の `/health` が DB に依存しており、DB 障害時に全タスクが unhealthy になる |
-| 中 | `ignore_changes = [task_definition]` により、新しいタスク定義がサービスへ反映される経路が未確定 |
 | 中 | `stg` / `prd` 環境が未整備 |
 | 低 | ALB が HTTP のみ（HTTPS 未対応） |
