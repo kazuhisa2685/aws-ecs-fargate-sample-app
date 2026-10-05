@@ -249,14 +249,14 @@ resource "aws_security_group" "alb_sg" {
     from_port   = 1500
     to_port     = 1500
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] #本来であれば開発端末に限定したいが、学習用なので割愛
   }
 
   ingress {
     from_port   = 1501
     to_port     = 1501
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] #本来であれば開発端末に限定したいが、学習用なので割愛
   }
 
   egress {
