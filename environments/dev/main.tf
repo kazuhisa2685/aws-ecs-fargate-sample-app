@@ -64,6 +64,7 @@ module "iam" {
   project       = local.project
   environment   = local.environment
   function_name = "CallDevopsAgent"
+  aws_rds_cluster_aurora_cluster_master_user_secret_arn = module.aurora.aws_rds_cluster_aurora_cluster_master_user_secret_arn
 }
 
 module "ecr" {

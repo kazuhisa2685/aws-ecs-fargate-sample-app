@@ -2,9 +2,20 @@ name: Deploy Infrastructure and ECS Services with Docker Images
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'デプロイ対象の環境を選択してください (dev / stg / prd)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - stg
+          - prd
 
 env:
   AWS_REGION: ap-northeast-1
+  ENV: ${{ inputs.environment }}
 
 permissions:
   id-token: write
@@ -33,7 +44,7 @@ jobs:
       # 1. 構文チェック & 初期化
       # -----------------------------------------------------------------
       - name: Terraform Init & Validate
-        working-directory: environments/dev
+        working-directory: environments/${{ env.ENV }}
         run: |
           terraform init
           terraform validate
@@ -42,7 +53,7 @@ jobs:
       # 2. ECS以外の基礎インフラ（VPC, IAM, ALB, ECR等）を先行デプロイ
       # -----------------------------------------------------------------
       - name: Deploy Base Infrastructure (VPC, IAM, ALB, ECR)
-        working-directory: environments/dev
+        working-directory: environments/${{ env.ENV }}
         run: |
           terraform apply -auto-approve \
             -target=module.vpc \
@@ -62,26 +73,26 @@ jobs:
       - name: Build and Push Backend Docker Image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: sample-dev-backend
+          ECR_REPOSITORY: sample-${{ env.ENV }}-backend
           IMAGE_TAG: ${{ env.SHORT_SHA }}
         run: |
-          docker build -f docker/sample-dev-backend/dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/sample-dev-backend
+          docker build -f docker/sample-${{ env.ENV }}-backend/dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/sample-${{ env.ENV }}-backend
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Build and Push Frontend Docker Image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: sample-dev-frontend
+          ECR_REPOSITORY: sample-${{ env.ENV }}-frontend
           IMAGE_TAG: ${{ env.SHORT_SHA }}
         run: |
-          docker build -f docker/sample-dev-frontend/dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/sample-dev-frontend
+          docker build -f docker/sample-${{ env.ENV }}-frontend/dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/sample-${{ env.ENV }}-frontend
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       # -----------------------------------------------------------------
-      # 4. タスク定義を更新（ECRにSHORT_SHAのイメージが存在するため成功する）
+      # 4. タスク定義を更新
       # -----------------------------------------------------------------
       - name: Deploy Task Definitions
-        working-directory: environments/dev
+        working-directory: environments/${{ env.ENV }}
         run: |
           terraform apply -auto-approve \
             -var="backend_image_tag=${{ env.SHORT_SHA }}" \
@@ -93,7 +104,7 @@ jobs:
       # 5. バックエンドECSサービスを先行デプロイ
       # -----------------------------------------------------------------
       - name: Deploy Backend ECS Service
-        working-directory: environments/dev
+        working-directory: environments/${{ env.ENV }}
         run: |
           terraform apply -auto-approve \
             -var="backend_image_tag=${{ env.SHORT_SHA }}" \
@@ -101,20 +112,20 @@ jobs:
             -target=module.ecs.aws_ecs_service.ecs_backend_service
 
       # -----------------------------------------------------------------
-      # バックエンドサービスが安定状態（RUNNING & Service Connect疎通可能）になるまで待機
+      # バックエンドサービスが安定状態になるまで待機
       # -----------------------------------------------------------------
       - name: Wait for Backend ECS Service to become Stable
         run: |
           aws ecs wait services-stable \
-            --cluster sample-dev-cluster \
-            --services sample-dev-backend-service \
-            --region ap-northeast-1
+            --cluster sample-${{ env.ENV }}-cluster \
+            --services sample-${{ env.ENV }}-backend-service \
+            --region ${{ env.AWS_REGION }}
 
       # -----------------------------------------------------------------
       # 6. フロントエンドおよび残りすべてのインフラをデプロイ
       # -----------------------------------------------------------------
       - name: Deploy Frontend ECS Service & Entire Infrastructure
-        working-directory: environments/dev
+        working-directory: environments/${{ env.ENV }}
         run: |
           terraform apply -auto-approve \
             -var="backend_image_tag=${{ env.SHORT_SHA }}" \
@@ -124,7 +135,7 @@ jobs:
       # 7. 監視機能
       # -----------------------------------------------------------------
       - name: Deploy Monitoring
-        working-directory: environments/dev
+        working-directory: environments/${{ env.ENV }}
         run: |
           terraform apply -auto-approve \
             -target=module.lambda \

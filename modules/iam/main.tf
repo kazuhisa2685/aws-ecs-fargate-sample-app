@@ -119,7 +119,7 @@ resource "aws_iam_role_policy" "get_secret_values" {
         Action = [
           "secretsmanager:GetSecretValue"
         ]
-        Resource = "*"
+        Resource = "${var.aws_rds_cluster_aurora_cluster_master_user_secret_arn}"
       }
     ]
   })
