@@ -59,7 +59,7 @@ resource "aws_appautoscaling_target" "ecs_frontend_autoscaling_target" {
 
 #ターゲットスケーリングにより、トラフィックの予測が難しいシステムでも、CPU使用率を一定に保つように自動でスケーリングすることが可能
 resource "aws_appautoscaling_policy" "ecs_frontend_targetscaling_policy" {
-  name               = "${var.project}-${var.environment}-cpu-target-tracking"
+  name               = "cpu-target-tracking"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs_frontend_autoscaling_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_frontend_autoscaling_target.scalable_dimension
@@ -77,7 +77,7 @@ resource "aws_appautoscaling_policy" "ecs_frontend_targetscaling_policy" {
 
 # 夜間（例: JST 22:00 -> UTC 13:00）に最小キャパシティを縮退させる設定
 resource "aws_appautoscaling_scheduled_action" "ecs_frontend_scale_down_night" {
-  name               = "${var.project}-${var.environment}-scale-down-night"
+  name               = "scale-down-night"
   resource_id        = aws_appautoscaling_target.ecs_frontend_autoscaling_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_frontend_autoscaling_target.scalable_dimension
   service_namespace  = aws_appautoscaling_target.ecs_frontend_autoscaling_target.service_namespace
@@ -94,7 +94,7 @@ resource "aws_appautoscaling_scheduled_action" "ecs_frontend_scale_down_night" {
 
 # 朝（例: JST 08:00 -> UTC 23:00 前日）に最小キャパシティを復元させる設定
 resource "aws_appautoscaling_scheduled_action" "ecs_frontend_scale_up_morning" {
-  name               = "${var.project}-${var.environment}-scale-up-morning"
+  name               = "scale-up-morning"
   resource_id        = aws_appautoscaling_target.ecs_frontend_autoscaling_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_frontend_autoscaling_target.scalable_dimension
   service_namespace  = aws_appautoscaling_target.ecs_frontend_autoscaling_target.service_namespace
