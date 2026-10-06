@@ -232,7 +232,7 @@ Internet ──(1500/1501)──▶ ALB ──(1500/1501)──▶ Frontend (Far
 
 | ワークフロー | 用途 | 実行方法 |
 | --- | --- | --- |
-| `deploy-all.yml` | 初回構築。基礎インフラ → イメージ push → タスク定義 → Backend → Frontend → 監視 の順に段階的にデプロイ | 手動 (workflow_dispatch) |
+| `deploy-all.yml` | 初回構築。基礎インフラ → イメージ push → タスク定義 → Backend → Frontend → 監視 の順に段階的にデプロイ（アプリケーションチームが実行する想定） | 手動 (workflow_dispatch) |
 | `deploy-infra.yml` | ECS 以外のインフラのみ更新 | 手動 |
 | `taskdef-push.yml` | アプリ更新時にイメージを build/push し、タスク定義を更新 | 手動 |
 | `destroy.yml` | 全リソースの削除 | 手動 |
