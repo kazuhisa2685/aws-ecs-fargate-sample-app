@@ -2,9 +2,20 @@ name: destroy-infra-and-services
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: '削除対象の環境を選択してください (dev / stg / prd)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - stg
+          - prd
 
 env:
   AWS_REGION: ap-northeast-1
+  ENV: ${{ inputs.environment }}
 
 permissions:
   id-token: write
@@ -33,7 +44,7 @@ jobs:
       # 1. 構文チェック & 初期化
       # -----------------------------------------------------------------
       - name: Terraform Init & Validate
-        working-directory: environments/dev
+        working-directory: environments/${{ env.ENV }}
         run: |
           terraform init
           terraform validate
@@ -42,7 +53,7 @@ jobs:
       # 2. ECSサービスおよび残りすべてのインフラ（Cluster等）を削除
       # -----------------------------------------------------------------
       - name: Destroy Base Infrastructure
-        working-directory: environments/dev
+        working-directory: environments/${{ env.ENV }}
         run: |
           # 引数のコマンドを最大3回リトライする。全部失敗したら非0を返す。
           retry() {
