@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
       secrets = [
         {
           name      = "DB_PASSWORD"
-          valueFrom = "${data.aws_caller_identity.current.account_id}:${var.aws_rds_cluster_aurora_cluster_master_user_secret_arn}:password::"
+          valueFrom = "${var.aws_rds_cluster_aurora_cluster_master_user_secret_arn}:password::"
         }
       ]
 
