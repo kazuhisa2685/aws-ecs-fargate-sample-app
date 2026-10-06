@@ -54,6 +54,13 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      # 構文チェック & 初期化
+      - name: Terraform Init & Validate
+        working-directory: environments/dev
+        run: |
+          terraform init
+          terraform validate
+
       # タスク定義を更新（ECRにSHORT_SHAのイメージが存在するため成功する）
       - name: Deploy Task Definitions
         working-directory: environments/dev
