@@ -63,7 +63,7 @@ module "iam" {
   source        = "../../modules/iam"
   project       = local.project
   environment   = local.environment
-  function_name = "CallprdopsAgent"
+  function_name = "CalldevopsAgent"
   aws_rds_cluster_aurora_cluster_master_user_secret_arn = module.aurora.aws_rds_cluster_aurora_cluster_master_user_secret_arn
 }
 
@@ -121,9 +121,9 @@ module "lambda" {
   source                     = "../../modules/lambda"
   project                    = local.project
   environment                = local.environment
-  call_prdops_agent_name     = "CallprdopsAgent"
+  call_devops_agent_name     = "CalldevopsAgent"
   send_msg_name              = "SendMsg"
-  call_prdops_agent_role_arn = module.iam.lambda_call_prdops_agent_role_arn
+  call_devops_agent_role_arn = module.iam.lambda_call_devops_agent_role_arn
   send_msg_role_arn          = module.iam.lambda_send_msg_role_arn
   sns_sendmsg_arn            = module.sns.sns_sendmsg_arn
 }
