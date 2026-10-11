@@ -27,6 +27,7 @@ import boto3
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+env = os.environ.get("ENV")
 
 # ---------------------------------------------------------------
 # 設定値（環境変数で上書き可能。未設定時はデフォルト値を使用）
@@ -34,10 +35,24 @@ logger.setLevel(logging.INFO)
 # Insight_query.csv の配置場所
 #   - Lambdaデプロイパッケージに同梱する場合: このファイルと同じディレクトリ
 #   - Lambda Layerに配置する場合: /opt/Insight_query.csv 等を環境変数で指定
-CSV_FILE_PATH = os.environ.get(
-    "INSIGHT_QUERY_CSV_PATH",
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "Insight_query.csv"),
-)
+if env == "dev":
+    CSV_FILE_PATH = os.environ.get(
+        "INSIGHT_QUERY_CSV_PATH",
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "Insight_query_dev.csv"),
+    )
+elif env == "stg":
+    CSV_FILE_PATH = os.environ.get(
+        "INSIGHT_QUERY_CSV_PATH",
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "Insight_query_stg.csv"),
+    )
+elif env == "prd":
+    CSV_FILE_PATH = os.environ.get(
+        "INSIGHT_QUERY_CSV_PATH",
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "Insight_query_prg.csv"),
+    )
+else:
+    raise ValueError(f"不正な環境変数 ENV={env} が設定されています。dev/stg/prd のいずれかを指定してください。")
+
 CSV_DELIMITER = "%"
 
 # 後続Lambda(CallDevopsAgent)の関数名・呼び出し方式

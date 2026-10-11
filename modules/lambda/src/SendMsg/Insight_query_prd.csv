@@ -1,0 +1,9 @@
+AlarmName%LogGroupName%InsightQuery
+sample-prd-backend-3xx%/ecs/sample-prd-backend-task%fields @timestamp, @message | filter @message like /3\d\d/ | sort @timestamp desc | limit 50
+sample-prd-backend-4xx%/ecs/sample-prd-backend-task%fields @timestamp, @message | filter @message like /4\d\d/ | sort @timestamp desc | limit 50
+sample-prd-backend-5xx%/ecs/sample-prd-backend-task%fields @timestamp, @message | filter @message like /5\d\d/ | sort @timestamp desc | limit 50
+sample-prd-backend-error%/ecs/sample-prd-backend-task%fields @timestamp, @message | filter @message like /ERROR/ or @message like /Exception/ or @message like /Traceback/ | sort @timestamp desc | limit 50
+sample-prd-backend-timeout%/ecs/sample-prd-backend-task%fields @timestamp, @message | filter @message like /timeout/ or @message like /timed out/ or @message like /TimeoutError/ | sort @timestamp desc | limit 50
+sample-prd-backend-db-error%/ecs/sample-prd-backend-task%fields @timestamp, @message | filter @message like /OperationalError/ or @message like /InterfaceError/ or @message like /could not connect/ or @message like /connection refused/ | sort @timestamp desc | limit 50
+sample-prd-frontend-error%/ecs/sample-prd-frontend-task%fields @timestamp, @message | filter @message like /ERROR/ or @message like /Exception/ or @message like /Traceback/ | sort @timestamp desc | limit 50
+sample-prd-frontend-backend-unreachable%/ecs/sample-prd-frontend-task%fields @timestamp, @message | filter @message like /ConnectionError/ or @message like /backend/ or @message like /refused/ | sort @timestamp desc | limit 50
