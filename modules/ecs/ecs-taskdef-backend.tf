@@ -1,3 +1,17 @@
+resource "aws_iam_role" "ssm_managed_instance_role" {
+  name = "ssm-managed-instance-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "ecs-tasks.amazonaws.com"
+      }
+    }]
+  })
+}
 ################################################
 # ECS タスク定義
 ################################################
@@ -47,6 +61,21 @@ resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
       ]
 
       command = ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] #これがないとECSがタスクを動かしてくれない。最初に実行するものを記載しないといけない。
+    },
+    {
+      name      = "amazon-ssm-agent"
+      image     = "public.ecr.aws/amazon-ssm-agent/amazon-ssm-agent:latest"
+      essential = true
+      environment = [
+        {
+          name  = "REGION"
+          value = local.region
+        },
+        {
+          name  = "MANAGED_INSTANCE_ROLE_NAME"
+          value = aws_iam_role.ssm_managed_instance_role.name
+        }
+      ]
     }
   ])
 }
