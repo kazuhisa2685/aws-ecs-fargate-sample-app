@@ -43,7 +43,7 @@ resource "aws_ecs_service" "ecs_frontend_service" {
   lifecycle {
     ignore_changes = [
       task_definition, #Terraform管理外でECSサービスのTask Definitionが更新されても、Terraform planで差分として扱わない
-      desired_count # ECS Service側で変更されるdesired_countをTerraformの差分検出から除外 オートスケーリングでdesired_countが変化してもTerraform planで差分として扱わないための設定　これで、スケーリングしても元のdesired_countに戻されることを防ぐ
+      desired_count    # ECS Service側で変更されるdesired_countをTerraformの差分検出から除外 オートスケーリングでdesired_countが変化してもTerraform planで差分として扱わないための設定　これで、スケーリングしても元のdesired_countに戻されることを防ぐ
     ]
   }
   #depends_on = [aws_lb_target_group.tg_blue]
@@ -81,7 +81,7 @@ resource "aws_appautoscaling_scheduled_action" "ecs_frontend_scale_down_night" {
   resource_id        = aws_appautoscaling_target.ecs_frontend_autoscaling_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_frontend_autoscaling_target.scalable_dimension
   service_namespace  = aws_appautoscaling_target.ecs_frontend_autoscaling_target.service_namespace
-  
+
   # UTC時間で指定 (cron(分 時 日 月 曜日 年))
   # 毎日 UTC 13:00 (JST 22:00) に min_capacity を 1 に変更
   schedule = "cron(0 13 * * ? *)"
@@ -98,7 +98,7 @@ resource "aws_appautoscaling_scheduled_action" "ecs_frontend_scale_up_morning" {
   resource_id        = aws_appautoscaling_target.ecs_frontend_autoscaling_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_frontend_autoscaling_target.scalable_dimension
   service_namespace  = aws_appautoscaling_target.ecs_frontend_autoscaling_target.service_namespace
-  
+
   # 毎日 UTC 23:00 (JST 08:00) に min_capacity を 2 に戻す
   schedule = "cron(0 23 * * ? *)"
 
