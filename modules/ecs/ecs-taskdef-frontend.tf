@@ -30,21 +30,6 @@ resource "aws_ecs_task_definition" "ecs_frontend_taskdef" {
       ]
 
       command = ["streamlit", "run", "app.py", "--server.port=1500", "--server.address=0.0.0.0"]
-    },
-    {
-      name      = "amazon-ssm-agent"
-      image     = "public.ecr.aws/amazon-ssm-agent/amazon-ssm-agent:latest"
-      essential = true
-      environment = [
-        {
-          name  = "REGION"
-          value = local.region
-        },
-        {
-          name  = "MANAGED_INSTANCE_ROLE_NAME"
-          value = aws_iam_role.ssm_managed_instance_role.name
-        }
-      ]
     }
   ])
 }

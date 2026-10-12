@@ -143,8 +143,3 @@ module "sns" {
   environment = local.environment
   sendmsg_arn = module.lambda.sendmsg_arn
 }
-module "fis" {
-  source      = "../../modules/fis"
-  project     = local.project
-  environment = local.environment
-}
