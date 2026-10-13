@@ -12,11 +12,7 @@ locals {
   region     = data.aws_region.current.region
 }
 
-###############################################
-# IAM
-###############################################
-
-# 1. EC2用のIAMロールを作成
+# EC2用のIAMロールを作成
 resource "aws_iam_role" "ssm_role" {
   name = "${var.project}-${var.environment}-ec2-ssm-role"
 
@@ -34,22 +30,19 @@ resource "aws_iam_role" "ssm_role" {
   })
 }
 
-# 2. SSMに必要なAWS管理ポリシーをアタッチ
+# SSMに必要なAWS管理ポリシーをアタッチ
 resource "aws_iam_role_policy_attachment" "ssm_policy" {
   role       = aws_iam_role.ssm_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-# 3. インスタンスプロファイルを作成
+# インスタンスプロファイルを作成
 resource "aws_iam_instance_profile" "ssm_profile" {
   name = "${var.project}-${var.environment}-ec2-ssm-instance-profile"
   role = aws_iam_role.ssm_role.name
 }
 
-################################################
 # Blue/Greenデプロイ用のIAMロールを作成
-################################################
-
 resource "aws_iam_role" "ecs_infrastructure_role_for_load_balancers" {
   name        = "${var.project}-${var.environment}-ecs-infrastructure-role-for-load-balancers"
   description = "Allows ECS to create and manage AWS resources on your behalf."
@@ -106,7 +99,6 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
 }
 
 # ECSタスク実行用のIAMロールにSecrets Managerへのアクセス権限を付与
-
 resource "aws_iam_role_policy" "get_secret_values" {
   name = "${var.project}-${var.environment}-ecs-get-secret-values"
   role = aws_iam_role.ecs_task_execution_role.id
@@ -125,10 +117,7 @@ resource "aws_iam_role_policy" "get_secret_values" {
   })
 }
 
-
-#-----------------------------------------------------------
 # CallDevopsAgent Lambda Function
-#-----------------------------------------------------------
 resource "aws_iam_role" "call_devops_agent_role" {
   name = "${var.project}-${var.environment}-call-devops-agent-role"
   assume_role_policy = jsonencode({
@@ -188,9 +177,7 @@ resource "aws_iam_role_policy_attachment" "call_devops_agent_policy_attachment" 
   role       = aws_iam_role.call_devops_agent_role.name
 }
 
-#-----------------------------------------------------------
 # SendMsg Lambda Function
-#-----------------------------------------------------------
 resource "aws_iam_role" "send_msg_role" {
   name = "${var.project}-${var.environment}-send-msg-role"
   assume_role_policy = jsonencode({

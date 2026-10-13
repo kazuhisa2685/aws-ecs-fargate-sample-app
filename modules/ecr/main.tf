@@ -1,7 +1,3 @@
-###############################################
-# ECR リポジトリ
-###############################################
-
 # ecrフロントエンドリポジトリ
 resource "aws_ecr_repository" "frontend" {
   name                 = "${var.project}-${var.environment}-frontend"

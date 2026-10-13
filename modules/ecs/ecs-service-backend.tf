@@ -1,6 +1,3 @@
-# ################################################
-# # ECS サービス用
-# ################################################
 resource "aws_ecs_service" "ecs_backend_service" {
   name            = "${var.project}-${var.environment}-backend-service"
   cluster         = aws_ecs_cluster.ecs_cluster.id

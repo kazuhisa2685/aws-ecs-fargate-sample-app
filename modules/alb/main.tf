@@ -1,7 +1,3 @@
-###############################################
-# load balancer for blue green deployment
-###############################################
-
 # ロードバランサー
 resource "aws_lb" "main" {
   name               = "${var.project}-${var.environment}-lb"
@@ -18,9 +14,6 @@ resource "aws_lb" "main" {
     Project     = var.project
   }
 }
-###############################################
-# フロントエンドLB
-###############################################
 
 # ターゲットグループ　フロントエンド１
 resource "aws_lb_target_group" "frontend_target_1" {
@@ -155,10 +148,6 @@ resource "aws_lb_listener_rule" "frontend_test_listener_rule" {
     }
   }
 }
-
-###############################################
-# バックエンドLB
-###############################################
 
 # ターゲットグループ　バックエンド１
 resource "aws_lb_target_group" "backend_target_1" {

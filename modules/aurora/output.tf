@@ -1,4 +1,3 @@
-# modules/aurora/output.tf
 output "aws_rds_cluster_aurora_cluster_endpoint" {
   description = "Aurora Cluster Writer Endpoint"
   value       = aws_rds_cluster.aurora_cluster.endpoint
