@@ -40,19 +40,15 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # -----------------------------------------------------------------
-      # 1. 構文チェック & 初期化
-      # -----------------------------------------------------------------
+      # 構文チェック & 初期化
       - name: Terraform Init & Validate
         working-directory: environments/${{ env.ENV }}
         run: |
           terraform init
           terraform validate
 
-      # -----------------------------------------------------------------
-      # 2. ECS以外の基礎インフラ（VPC, IAM, ALB, ECR等）を先行デプロイ
-      # -----------------------------------------------------------------
-      - name: Deploy Base Infrastructure (VPC, IAM, ALB, ECR)
+      # ECS以外の基礎インフラを先行デプロイ
+      - name: Deploy Base Infrastructure
         working-directory: environments/${{ env.ENV }}
         run: |
           terraform apply -auto-approve \
@@ -63,9 +59,7 @@ jobs:
             -target=module.aurora \
             -target=module.ec2
 
-      # -----------------------------------------------------------------
-      # 3. ECRログイン & Dockerイメージの Build / Push
-      # -----------------------------------------------------------------
+      # ECRログイン & Dockerイメージの Build / Push
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
@@ -88,9 +82,7 @@ jobs:
           docker build -f docker/sample-${{ env.ENV }}-frontend/dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./docker/sample-${{ env.ENV }}-frontend
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # -----------------------------------------------------------------
-      # 4. タスク定義を更新
-      # -----------------------------------------------------------------
+      # タスク定義を更新
       - name: Deploy Task Definitions
         working-directory: environments/${{ env.ENV }}
         run: |
@@ -100,9 +92,7 @@ jobs:
             -target=module.ecs.aws_ecs_task_definition.ecs_backend_taskdef \
             -target=module.ecs.aws_ecs_task_definition.ecs_frontend_taskdef
 
-      # -----------------------------------------------------------------
-      # 5. バックエンドECSサービスを先行デプロイ
-      # -----------------------------------------------------------------
+      # バックエンドECSサービスを先行デプロイ
       - name: Deploy Backend ECS Service
         working-directory: environments/${{ env.ENV }}
         run: |
@@ -111,9 +101,7 @@ jobs:
             -var="frontend_image_tag=${{ env.SHORT_SHA }}" \
             -target=module.ecs.aws_ecs_service.ecs_backend_service
 
-      # -----------------------------------------------------------------
       # バックエンドサービスが安定状態になるまで待機
-      # -----------------------------------------------------------------
       - name: Wait for Backend ECS Service to become Stable
         run: |
           aws ecs wait services-stable \
@@ -121,9 +109,7 @@ jobs:
             --services sample-${{ env.ENV }}-backend-service \
             --region ${{ env.AWS_REGION }}
 
-      # -----------------------------------------------------------------
-      # 6. フロントエンドおよび残りすべてのインフラをデプロイ
-      # -----------------------------------------------------------------
+      # フロントエンドおよび残りすべてのインフラをデプロイ
       - name: Deploy Frontend ECS Service & Entire Infrastructure
         working-directory: environments/${{ env.ENV }}
         run: |
@@ -131,9 +117,7 @@ jobs:
             -var="backend_image_tag=${{ env.SHORT_SHA }}" \
             -var="frontend_image_tag=${{ env.SHORT_SHA }}"
 
-      # -----------------------------------------------------------------
-      # 7. 監視機能
-      # -----------------------------------------------------------------
+      # 監視機能
       - name: Deploy Monitoring
         working-directory: environments/${{ env.ENV }}
         run: |

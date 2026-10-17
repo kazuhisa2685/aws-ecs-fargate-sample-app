@@ -1,6 +1,3 @@
-###############################################
-# ECS クラスター (ECS更新時、ヘルスチェック猶予期間を設定することを忘れずに)
-###############################################
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = "${var.project}-${var.environment}-cluster"
   service_connect_defaults {

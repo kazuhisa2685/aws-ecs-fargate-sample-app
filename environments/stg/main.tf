@@ -60,10 +60,10 @@ module "ec2" {
 }
 
 module "iam" {
-  source        = "../../modules/iam"
-  project       = local.project
-  environment   = local.environment
-  function_name = "CalldevopsAgent"
+  source                                                = "../../modules/iam"
+  project                                               = local.project
+  environment                                           = local.environment
+  function_name                                         = "CalldevopsAgent"
   aws_rds_cluster_aurora_cluster_master_user_secret_arn = module.aurora.aws_rds_cluster_aurora_cluster_master_user_secret_arn
 }
 

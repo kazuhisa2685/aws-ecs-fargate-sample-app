@@ -1,6 +1,3 @@
-################################################
-# ECS タスク定義
-################################################
 resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
   family                   = "${var.project}-${var.environment}-backend-task"
   network_mode             = "awsvpc"

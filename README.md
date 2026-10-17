@@ -117,8 +117,7 @@ docs/
      ├── 005-container-communication-endpoint-resolution.md
      ├── 006-log-error-detection-architecture.md
      ├── 007-service-connect-name-resolution.md
-     ├── 008-backend-deployment-strategy.md
-     └── 009-maintenance-page.md
+     └── 008-backend-deployment-strategy.md
 ```
 
 ### Issue

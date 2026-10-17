@@ -1,7 +1,3 @@
-###############################################
-# Aurora
-###############################################
-
 # Auroraサブネットグループ構築
 resource "aws_db_subnet_group" "aurora" {
   name        = "${var.project}-${var.environment}-aurora-subnet-group"

@@ -40,19 +40,15 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # -----------------------------------------------------------------
-      # 1. 構文チェック & 初期化
-      # -----------------------------------------------------------------
+      # 構文チェック & 初期化
       - name: Terraform Init & Validate
         working-directory: environments/${{ env.ENV }}
         run: |
           terraform init
           terraform validate
 
-      # -----------------------------------------------------------------
-      # 2. ECS以外の基礎インフラをデプロイ
-      # -----------------------------------------------------------------
-      - name: Deploy Base Infrastructure (VPC, IAM, ALB, ECR, AURORA, EC2)
+      # ECS以外の基礎インフラをデプロイ
+      - name: Deploy Base Infrastructure
         working-directory: environments/${{ env.ENV }}
         run: |
           terraform apply -auto-approve \
