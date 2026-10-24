@@ -23,7 +23,7 @@ resource "aws_iam_role" "fis_experiment_role" {
 
 resource "aws_iam_role_policy_attachment" "fis_ecs_access" {
   role       = aws_iam_role.fis_experiment_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSFaultInjectionSimulatorECSAccess"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSFaultInjectionSimulatorECSAccess"
 }
 
 resource "aws_fis_experiment_template" "fargate_cpu_stress_test" {
