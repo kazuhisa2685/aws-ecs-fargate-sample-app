@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+
 resource "aws_iam_role" "ssm_managed_instance_role" {
   name = "ssm-managed-instance-role"
 
@@ -14,10 +13,6 @@ resource "aws_iam_role" "ssm_managed_instance_role" {
     }]
   })
 }
-################################################
-# ECS タスク定義
-################################################
->>>>>>> parent of 552b553 (Revert "FIS導入検証")
 resource "aws_ecs_task_definition" "ecs_backend_taskdef" {
   family                   = "${var.project}-${var.environment}-backend-task"
   network_mode             = "awsvpc"
